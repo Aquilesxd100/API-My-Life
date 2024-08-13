@@ -1,0 +1,7 @@
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.csproj.AssemblyReference.cache
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.AssemblyInfoInputs.cache
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.AssemblyInfo.cs
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.csproj.CoreCompileInputs.cache
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ferna\source\repos\my_life_api\my_life_api\obj\Debug\net5.0\my_life_api.MvcApplicationPartsAssemblyInfo.cache

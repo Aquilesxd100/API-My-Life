@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "nXQHUmXpQ2FuwAtn6QJAKEzDvxLq5Q2/UbS9412S/zc=",
+  "Source": "my_life_api",
+  "BasePath": "_content/my_life_api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
