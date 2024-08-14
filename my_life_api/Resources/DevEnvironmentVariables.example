@@ -1,0 +1,9 @@
+namespace my_life_api.Resources
+{
+    public static class DevEnvironmentVariables
+    {
+        public static string DataBaseUrl = "Server=serverAddress;Port=6666;Database=databaseName;User ID=userName;Password=123;SslMode=none;CharSet=latin1;Connection Timeout=60;";
+        
+        public static string adminPassword = "123";
+    }
+}

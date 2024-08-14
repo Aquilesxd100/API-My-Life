@@ -1,4 +1,9 @@
+using my_life_api.Resources;
+
 var builder = WebApplication.CreateBuilder(args);
+
+string dataBaseUrl = Environment.GetEnvironmentVariable("DATA_BASE_URL") ?? DevEnvironmentVariables.dataBaseUrl;
+await DataBase.ConnectToDataBase(dataBaseUrl);
 
 // Add services to the container.
 

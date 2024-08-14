@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using my_life_api.Resources;
 
 namespace my_life_api.Controllers
 {
@@ -15,9 +16,10 @@ namespace my_life_api.Controllers
         }
 
         [HttpGet(Name = "teste")]
-        public string Get()
+        public async Task<string> Get()
         {
-            return "oi";
+            string response = await DataBase.TesteConexao();
+            return response;
         }
     }
 }
