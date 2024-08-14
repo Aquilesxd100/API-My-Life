@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("my_life_api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1f45aae5bf195ffe09728bc054f435c5f7ad629")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e32edfd82a5e7c73ed745c090ee16fcc3760166b")]
 [assembly: System.Reflection.AssemblyProductAttribute("my_life_api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("my_life_api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
