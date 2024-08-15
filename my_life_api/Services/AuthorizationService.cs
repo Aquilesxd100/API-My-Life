@@ -1,8 +1,9 @@
-﻿using JWT.Serializers;
-using JWT;
-using my_life_api.Models;
+﻿using JWT;
+using JWT.Serializers;
 using JWT.Algorithms;
 using JWT.Exceptions;
+using my_life_api.Models;
+
 
 namespace my_life_api.Services
 {

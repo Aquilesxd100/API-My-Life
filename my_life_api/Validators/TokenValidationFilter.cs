@@ -8,7 +8,6 @@ namespace my_life_api.Filters
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            Console.WriteLine(context.HttpContext.Request.Headers["Authorization"]);
             var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             AuthorizationService authorizationService = new AuthorizationService();

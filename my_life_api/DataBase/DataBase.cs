@@ -1,7 +1,5 @@
-﻿using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI;
-using System.Data;
-using System.Data.Common;
+﻿using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace my_life_api.Resources
 {

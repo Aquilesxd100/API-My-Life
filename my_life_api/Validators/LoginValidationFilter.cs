@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using my_life_api.Models;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
+using my_life_api.Models;
 
 namespace my_life_api.Validators
 {
