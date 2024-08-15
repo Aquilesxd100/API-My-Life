@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\my_life_api.props" />
-</Project>
