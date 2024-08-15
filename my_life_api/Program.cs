@@ -1,4 +1,5 @@
 using my_life_api.Resources;
+using my_life_api.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<TokenValidationFilter>();
 
 var app = builder.Build();
 

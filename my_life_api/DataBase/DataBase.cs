@@ -26,7 +26,6 @@ namespace my_life_api.Resources
         {
             connection = new MySqlConnection(connectionString);
             await connection.OpenAsync();
-            Console.WriteLine((connection.State == ConnectionState.Open ? "conexao aberta" : "conexao não esta aberta"));
         }
 
 
