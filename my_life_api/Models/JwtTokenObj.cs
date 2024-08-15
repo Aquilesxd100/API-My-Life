@@ -4,12 +4,12 @@ namespace my_life_api.Models
 {
     public class JwtTokenObj
     {
-        public string _password;
+        public string password;
         public double exp;
 
-        public JwtTokenObj(string password)
+        public JwtTokenObj(string _password)
         {
-            _password = password;
+            password = _password;
             exp = GetExpirationDate();
         }
 

@@ -6,7 +6,6 @@ namespace my_life_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [ServiceFilter(typeof(TokenValidationFilter))]
     public class TesteController : ControllerBase
     {
 
@@ -18,6 +17,7 @@ namespace my_life_api.Controllers
         }
 
         [HttpGet(Name = "teste")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
         public CustomResult Get()
         {
             return new CustomResult(200, "Tudo certo!");

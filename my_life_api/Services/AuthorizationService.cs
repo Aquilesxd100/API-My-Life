@@ -45,7 +45,7 @@ namespace my_life_api.Services
                 JwtTokenObj jwtTokenObj = serializer.Deserialize<JwtTokenObj>(json);
 
                 string appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD");
-                if (jwtTokenObj._password != appPassword) {
+                if (jwtTokenObj.password != appPassword) {
                     throw new CustomException("A senha enviada esta incorreta.", 400);
                 }
 

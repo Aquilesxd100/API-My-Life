@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
 using my_life_api.Models;
 using my_life_api.Services;
 
@@ -9,6 +8,7 @@ namespace my_life_api.Filters
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            Console.WriteLine(context.HttpContext.Request.Headers["Authorization"]);
             var token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             AuthorizationService authorizationService = new AuthorizationService();

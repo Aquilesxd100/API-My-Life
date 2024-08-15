@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using my_life_api.Services;
 using my_life_api.Models;
+using my_life_api.Validators;
 
 namespace my_life_api.Controllers
 {
@@ -8,7 +9,6 @@ namespace my_life_api.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
-
         private readonly ILogger<LoginController> _logger;
 
         public LoginController(ILogger<LoginController> logger)
@@ -17,13 +17,14 @@ namespace my_life_api.Controllers
         }
 
         [HttpPost(Name = "login")]
-        public IActionResult Post([FromBody] LoginRequest request)
+        [ServiceFilter(typeof(LoginValidationFilter))]
+        public IActionResult Login([FromBody] LoginRequest request)
         {
             AuthorizationService authorizationService = new AuthorizationService();
 
             try
             {
-                string token = authorizationService.Login(request.Password);
+                string token = authorizationService.Login(request.senha);
                 return new CustomResult(200, "Login efetuado com sucesso.", new{ token });
             }
             catch (CustomException exception)
