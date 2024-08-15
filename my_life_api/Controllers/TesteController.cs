@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using my_life_api.Resources;
+﻿using Microsoft.AspNetCore.Mvc;
+using my_life_api.Filters;
+using my_life_api.Models;
 
 namespace my_life_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ServiceFilter(typeof(TokenValidationFilter))]
     public class TesteController : ControllerBase
     {
 
@@ -16,10 +18,9 @@ namespace my_life_api.Controllers
         }
 
         [HttpGet(Name = "teste")]
-        public async Task<string> Get()
+        public CustomResult Get()
         {
-            string response = await DataBase.TesteConexao();
-            return response;
+            return new CustomResult(200, "Tudo certo!");
         }
     }
 }
