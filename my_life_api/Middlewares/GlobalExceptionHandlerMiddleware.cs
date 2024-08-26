@@ -15,14 +15,12 @@ namespace my_life_api.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            Console.WriteLine("entrou no middleware");
             try
             {
                 await _next(context);
             }
             catch (CustomException exception)
             {
-                Console.WriteLine("middleware pegou a excecao");
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = exception.StatusCode;
 
@@ -36,7 +34,6 @@ namespace my_life_api.Middlewares
             }
             catch (Exception exception)
             {
-                Console.WriteLine("middleware pegou a excecao2");
                 Console.WriteLine(exception);
 
                 context.Response.ContentType = "application/json";

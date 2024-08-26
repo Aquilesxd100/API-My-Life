@@ -49,7 +49,6 @@ namespace my_life_api.Configurations
                     // Continua a execução do código validando o campo específico no local devido
                     case DefaultApiErrorsEnum.FieldIsRequired:
                         context.HttpContext.Request.Headers.Add("Has-Invalid-Field", "true");
-                        Console.WriteLine("caiu no null problematico");
                         return null;
 
                     case DefaultApiErrorsEnum.EmptyBody:
