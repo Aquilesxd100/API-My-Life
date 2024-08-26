@@ -1,23 +1,26 @@
 ﻿using System.Collections.Immutable;
 
-public class RequestBodyBufferingMiddleware
+namespace my_life_api.Middlewares
 {
-    private readonly RequestDelegate _next;
-    public static readonly ImmutableList<string> methodsWithBody = ImmutableList.Create("POST", "PUT");
-
-    public RequestBodyBufferingMiddleware(RequestDelegate next)
+    public class RequestBodyBufferingMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
+        public static readonly ImmutableList<string> methodsWithBody = ImmutableList.Create("POST", "PUT");
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        if (methodsWithBody.Contains(context.Request.Method))
+        public RequestBodyBufferingMiddleware(RequestDelegate next)
         {
-            // Habilita o bufferamento para ler o corpo da requisição múltiplas vezes
-            context.Request.EnableBuffering();
+            _next = next;
         }
 
-        await _next(context);
+        public async Task InvokeAsync(HttpContext context)
+        {
+            if (methodsWithBody.Contains(context.Request.Method))
+            {
+                // Habilita o bufferamento para ler o corpo da requisição múltiplas vezes
+                context.Request.EnableBuffering();
+            }
+
+            await _next(context);
+        }
     }
 }

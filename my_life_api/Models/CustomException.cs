@@ -4,9 +4,12 @@
     {
         public int StatusCode { get; set; }
 
-        public CustomException(string Message, int errorStatusCode): base(Message)
+        public object Content { get; set; }
+
+        public CustomException(int ErrorStatusCode, string Message, object ErrorContent = null) : base(Message)
         {
-            StatusCode = errorStatusCode;
+            StatusCode = ErrorStatusCode;
+            Content = ErrorContent;
         }
     }
 }

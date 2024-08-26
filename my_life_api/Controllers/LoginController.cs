@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using my_life_api.Services;
 using my_life_api.Models;
 using my_life_api.Validators;
+using my_life_api.Resources;
 
 namespace my_life_api.Controllers
 {
@@ -21,16 +22,9 @@ namespace my_life_api.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             AuthorizationService authorizationService = new AuthorizationService();
-
-            try
-            {
-                string token = authorizationService.Login(request.senha);
-                return new CustomResult(200, "Login efetuado com sucesso.", new{ token });
-            }
-            catch (CustomException exception)
-            {
-                return new CustomResult(exception.StatusCode, exception.Message);
-            }
+            
+            string token = authorizationService.Login(request.senha);
+            return Ok(ApiResponse.CreateBody(200, "Login efetuado com sucesso.", new { token } ));
         }
     }
 }

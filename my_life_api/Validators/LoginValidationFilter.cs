@@ -1,29 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json;
 using my_life_api.Models;
+using my_life_api.Resources;
 
 namespace my_life_api.Validators
 {
-    public class LoginValidationFilter : IActionFilter
+    public class LoginValidationFilter : ICustomActionFilter
     {
-        public async void OnActionExecuting(ActionExecutingContext context)
+        public override async Task OnActionExecutionAsync(
+            ActionExecutingContext context, 
+            ActionExecutionDelegate next)
         {
-            context.HttpContext.Request.Body.Position = 0;
+            var body = await GetBodyContent<LoginRequest>(context);
 
-            using var reader = new StreamReader(context.HttpContext.Request.Body, encoding: System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 1024, leaveOpen: true);
-            var body = await reader.ReadToEndAsync();
-
-            // Reinicia a posicao de leitura do body para ser lido corretamente pelo controller
-            context.HttpContext.Request.Body.Position = 0;
-
-            var request = JsonConvert.DeserializeObject<LoginRequest>(body);
-            if (request == null || string.IsNullOrEmpty(request.senha))
+            if (string.IsNullOrEmpty(body.senha))
             {
-                context.Result = new CustomResult(400, "Informe sua senha pelo corpo da requisição para efetuar login.");
+                
+                throw new CustomException(400, "Informe sua senha pelo corpo da requisição para efetuar login.");
             }
-        }
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
+
+            await next();
         }
     }
 }

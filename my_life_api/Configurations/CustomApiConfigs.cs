@@ -1,22 +1,34 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
-using my_life_api.Models;
+using my_life_api.Resources;
 
 namespace my_life_api.Configurations
 {
+    public class DefaultApiErrorType
+    {
+        public DefaultApiErrorsEnum type { get; set; }
+        public string message { get; set; }
+
+        public DefaultApiErrorType(DefaultApiErrorsEnum _type, string _message)
+        {
+            type = _type;
+            message = _message;
+        }
+    }
+
     public enum DefaultApiErrorsEnum
     {
         NotRegistered,
         EmptyBody,
         FieldIsRequired
     }
-    public static class CustomApiConfigurations
+    public class CustomApiConfigs : ControllerBase
     {
         public static readonly ImmutableList<DefaultApiErrorType> errorTypes = ImmutableList.Create(
             new DefaultApiErrorType(DefaultApiErrorsEnum.EmptyBody, "A non-empty request body is required."),
             new DefaultApiErrorType(DefaultApiErrorsEnum.FieldIsRequired, "field is required.")
         );
-        public static void OverrideInvalidModels(ApiBehaviorOptions options)
+        public void OverrideInvalidModels(ApiBehaviorOptions options)
         {
             options.InvalidModelStateResponseFactory = context =>
             {
@@ -36,16 +48,21 @@ namespace my_life_api.Configurations
                 {
                     // Continua a execução do código validando o campo específico no local devido
                     case DefaultApiErrorsEnum.FieldIsRequired:
+                        context.HttpContext.Request.Headers.Add("Has-Invalid-Field", "true");
+                        Console.WriteLine("caiu no null problematico");
                         return null;
 
                     case DefaultApiErrorsEnum.EmptyBody:
-                        return new CustomResult(400, "O corpo da requisição não foi enviado.");
+                        return BadRequest(ApiResponse.CreateBody(
+                            400, 
+                            "O corpo da requisição não foi enviado."
+                        ));
 
                     default:
-                        return new CustomResult(
+                        return BadRequest(ApiResponse.CreateBody(
                             400, 
                             "Ocorreu um erro de validação não registrado, verifique os dados enviados e tente novamente."
-                        );
+                        ));
                 }        
             };
         }

@@ -1,7 +1,7 @@
 using my_life_api.Resources;
-using my_life_api.Filters;
 using my_life_api.Validators;
 using my_life_api.Configurations;
+using my_life_api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
@@ -11,15 +11,18 @@ await DataBase.ConnectToDataBase(dataBaseUrl);
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
-        CustomApiConfigurations.OverrideInvalidModels(options)
+        new CustomApiConfigs().OverrideInvalidModels(options)
     );
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
 
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<RequestBodyBufferingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,8 +34,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.UseMiddleware<RequestBodyBufferingMiddleware>();
 
 app.MapControllers();
 

@@ -4,9 +4,28 @@ using JWT.Algorithms;
 using JWT.Exceptions;
 using my_life_api.Models;
 
-
 namespace my_life_api.Services
 {
+    public class JwtTokenObj
+    {
+        public string password;
+        public double exp;
+
+        public JwtTokenObj(string _password)
+        {
+            password = _password;
+            exp = GetExpirationDate();
+        }
+
+        static private double GetExpirationDate()
+        {
+            int daysForTokenToExpire = 5;
+
+            IDateTimeProvider provider = new UtcDateTimeProvider();
+            return UnixEpoch.GetSecondsSince(provider.GetNow().AddDays(daysForTokenToExpire));
+        }
+    }
+
     public class AuthorizationService
     {
         public string Login(string password)
@@ -14,7 +33,7 @@ namespace my_life_api.Services
             string appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD");
             if (password != appPassword)
             {
-                throw new CustomException("A senha enviada esta incorreta.", 400);
+                throw new CustomException(400, "A senha enviada esta incorreta.");
             }
 
             IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
@@ -32,7 +51,7 @@ namespace my_life_api.Services
         {
             try
             {
-                if (token == null) throw new CustomException("Nenhuma credencial foi fornecida, efetue o login.", 401);
+                if (token == null) throw new CustomException(401, "Nenhuma credencial foi fornecida, efetue o login.");
 
                 IJsonSerializer serializer = new JsonNetSerializer();
                 IDateTimeProvider provider = new UtcDateTimeProvider();
@@ -47,21 +66,21 @@ namespace my_life_api.Services
 
                 string appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD");
                 if (jwtTokenObj.password != appPassword) {
-                    throw new CustomException("A senha enviada esta incorreta.", 400);
+                    throw new CustomException(400, "A senha enviada esta incorreta.");
                 }
 
             }
             catch (TokenNotYetValidException)
             {
-                throw new CustomException("As credenciais ainda não são validas.", 403);
+                throw new CustomException(403, "As credenciais ainda não são validas.");
             }
             catch (TokenExpiredException)
             {
-                throw new CustomException("As credenciais expiraram, faça login novamente.", 403);
+                throw new CustomException(403, "As credenciais expiraram, faça login novamente.");
             }
             catch (SignatureVerificationException)
             {
-                throw new CustomException("A assinatura da credencial é inválida.", 403);
+                throw new CustomException(403, "A assinatura da credencial é inválida.");
             }
             catch (CustomException exception)
             {
@@ -70,7 +89,7 @@ namespace my_life_api.Services
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                throw new CustomException("Um erro ocorreu ao validar suas credenciais, verifique-as e tente novamente.", 400);
+                throw new CustomException(400, "Um erro ocorreu ao validar suas credenciais, verifique-as e tente novamente.");
             }
         }
     }

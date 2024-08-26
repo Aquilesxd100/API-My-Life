@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using my_life_api.Filters;
-using my_life_api.Models;
+using my_life_api.Validators;
+using my_life_api.Resources;
 
 namespace my_life_api.Controllers
 {
@@ -18,9 +18,9 @@ namespace my_life_api.Controllers
 
         [HttpGet(Name = "teste")]
         [ServiceFilter(typeof(TokenValidationFilter))]
-        public CustomResult Get()
+        public IActionResult Get()
         {
-            return new CustomResult(200, "Tudo certo!");
+            return Ok(ApiResponse.CreateBody(200, "Tudo certo!"));
         }
     }
 }
