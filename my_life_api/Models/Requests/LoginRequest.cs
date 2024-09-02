@@ -1,4 +1,4 @@
-﻿namespace my_life_api.Models
+﻿namespace my_life_api.Models.Requests
 {
     public class LoginRequest
     {

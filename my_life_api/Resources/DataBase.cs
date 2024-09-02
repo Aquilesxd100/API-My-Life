@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using my_life_api.Models;
 using MySql.Data.MySqlClient;
 
 namespace my_life_api.Resources
@@ -26,35 +27,50 @@ namespace my_life_api.Resources
             await connection.OpenAsync();
         }
 
-
-
-
-        public static async Task<string> TesteConexao()
+        public static async Task<List<int>> GetContentTypesId()
         {
             await OpenConnectionIfClosed();
-            try
-            {
-                // create a MySQL command and set the SQL statement with parameters
-                MySqlCommand myCommand = new MySqlCommand();
-                myCommand.Connection = connection;
-                myCommand.CommandText = @"SELECT * FROM teste;";
 
-                // execute the command and read the results
-                List<string> nomesBanco = new List<string>();
-                using var myReader = await myCommand.ExecuteReaderAsync();
-                while (myReader.Read())
-                {
-                    nomesBanco.Add(myReader.GetString("nome"));
-                }
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = connection;
+            myCommand.CommandText = @" Select id from ContentTypes; ";
 
-                await CloseConnection();
-                return $"o nome do primeiro item é {nomesBanco[0]}, do ultimo item é {nomesBanco[(nomesBanco.Count() - 1)]}";
-            }
-            catch (MySqlException ex)
+            List<int> contentTypesIds = new List<int>();
+            using var myReader = await myCommand.ExecuteReaderAsync();
+
+            while (myReader.Read())
             {
-                Console.WriteLine(ex);
-                return "Um erro ocorreu!";
+                contentTypesIds.Add(myReader.GetInt32("id"));
             }
+
+            await CloseConnection();
+
+            return contentTypesIds;
+        }
+
+        public static async Task CreateAuthor(AuthorDTO author)
+        {
+            await OpenConnectionIfClosed();
+
+            string treatedUrlImage = author.urlImagem != null 
+                ? $"'{author.urlImagem}'"
+                : "NULL";
+
+            // TBM PRECISA ATUALIZAR ESSA URL DE IMAGEM PARA POSTAR NO STORAGE A IMAGEM E RETONAR O LINK DELA
+            // CASO FALHE A INCLUSAO NO BANCO ABAIXO DEVE-SE DELETAR A IMAGEM CRIADA LÁ NO STORAGE
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = connection;
+
+            myCommand.CommandText = 
+                "Insert Into Authors" +
+                    "(name, imageUrl, content_type_id)" +
+                    "Values" +
+                        $"('{author.nome}', {treatedUrlImage}, {author.idTipoConteudo})";
+
+            await myCommand.ExecuteReaderAsync();
+
+            await CloseConnection();
         }
     }
 }

@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
+builder.Services.AddScoped<AuthorValidationFilter>();
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
