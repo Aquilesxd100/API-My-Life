@@ -58,6 +58,11 @@ namespace my_life_api.Configurations
                         ));
 
                     default:
+                        Console.WriteLine("Erros Registrados: ");
+                        foreach(string er in errors)
+                        {
+                            Console.WriteLine(er);
+                        }
                         return BadRequest(ApiResponse.CreateBody(
                             400, 
                             "Ocorreu um erro de validação não registrado, verifique os dados enviados e tente novamente."
