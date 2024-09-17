@@ -10,4 +10,5 @@ Insert Into ContentTypes (name)
     ('Jogos'),
     ('Frases'),
     ('Livros'),
-    ('Seriado');
+    ('Seriado'),
+    ('Anime');
