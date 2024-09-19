@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using my_life_api.Models;
+using my_life_api.Models.Requests;
 using MySql.Data.MySqlClient;
 
 namespace my_life_api.Resources
@@ -21,54 +22,87 @@ namespace my_life_api.Resources
             await connection.CloseAsync();
         }
 
-        public static async Task ConnectToDataBase(string connectionString)
+        public static void ConfigureDataBase(string connectionString)
         {
             connection = new MySqlConnection(connectionString);
-            await connection.OpenAsync();
         }
 
-        public static async Task<List<int>> GetContentTypesId()
+        public static async Task<IEnumerable<AuthorDTO>> GetAuthorsByContentTypeId(int contentTypeId)
         {
             await OpenConnectionIfClosed();
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = connection;
-            myCommand.CommandText = @" Select id from ContentTypes; ";
+            myCommand.CommandText = @" Select id, name, imageUrl, contentTypeId " +
+                "From Authors " +
+                $"Where contentTypeId = {contentTypeId};";
 
-            List<int> contentTypesIds = new List<int>();
+            List<AuthorDTO> authors = new List<AuthorDTO>();
             using var myReader = await myCommand.ExecuteReaderAsync();
 
             while (myReader.Read())
             {
-                contentTypesIds.Add(myReader.GetInt32("id"));
+                AuthorDTO authorToAdd = new AuthorDTO()
+                {
+                    id = myReader.GetInt32("id"),
+                    nome = myReader.GetString("name"),
+                    urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
+                    idTipoConteudo = (ContentTypesEnum)contentTypeId,
+                };
+                authors.Add(authorToAdd);
             }
 
             await CloseConnection();
 
-            return contentTypesIds;
+            return authors;
         }
 
-        public static async Task CreateAuthor(AuthorDTO author)
+        public static async Task<int> CreateAuthor(AuthorDTO author)
         {
             await OpenConnectionIfClosed();
 
-            string treatedUrlImage = author.urlImagem != null 
+            string treatedUrlImage = author.urlImagem != null
                 ? $"'{author.urlImagem}'"
                 : "NULL";
-
-            // TBM PRECISA ATUALIZAR ESSA URL DE IMAGEM PARA POSTAR NO STORAGE A IMAGEM E RETONAR O LINK DELA
-            // CASO FALHE A INCLUSAO NO BANCO ABAIXO DEVE-SE DELETAR A IMAGEM CRIADA LÁ NO STORAGE
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = connection;
 
-            myCommand.CommandText = 
+            myCommand.CommandText =
                 "Insert Into Authors" +
-                    "(name, imageUrl, content_type_id)" +
+                    "(name, imageUrl, contentTypeId)" +
                     "Values" +
-                        $"('{author.nome}', {treatedUrlImage}, {author.idTipoConteudo})";
+                        $"('{author.nome}', {treatedUrlImage}, {(int)author.idTipoConteudo});"
+                + "Select Last_Insert_Id();";
 
-            await myCommand.ExecuteReaderAsync();
+            var result = await myCommand.ExecuteScalarAsync();
+            int authorId = Int32.Parse(result.ToString());
+
+            await CloseConnection();
+
+            return authorId;
+        }
+
+        public static async Task UpdateAuthor(AuthorDTO author)
+        {
+            await OpenConnectionIfClosed();
+
+            string treatedUrlImage = author.urlImagem != null
+                ? $"'{author.urlImagem}'"
+                : "NULL";
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = connection;
+
+            myCommand.CommandText =
+                "Update Authors " +
+                    "Set " +
+                        $"name = '{author.nome}'," +
+                        $"imageUrl = {treatedUrlImage}," +
+                        $"contentTypeId = {(int)author.idTipoConteudo} " +
+                $"Where id = {author.id};";
+
+            await myCommand.ExecuteScalarAsync();
 
             await CloseConnection();
         }

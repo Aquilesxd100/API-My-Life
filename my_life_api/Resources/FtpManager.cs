@@ -56,7 +56,7 @@ namespace my_life_api.Resources
             }
         }
 
-        public static async Task<string> UploadAuthorPicture(string authorId, IFormFile image)
+        public static async Task<string> UploadAuthorPicture(int authorId, IFormFile image)
         {
             await OpenConnectionIfClosed();
 
@@ -70,7 +70,7 @@ namespace my_life_api.Resources
             return pictureUrl;
         }
 
-        private static string GetImageName(string id, IFormFile img, string prefix = null)
+        private static string GetImageName(int id, IFormFile img, string prefix = null)
         {
             string mimeType = img.ContentType;
             string imgExtension = "." + mimeType.Substring(mimeType.IndexOf("/") + 1);

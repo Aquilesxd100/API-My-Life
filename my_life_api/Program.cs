@@ -7,7 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
 
 string dataBaseUrl = Environment.GetEnvironmentVariable("DATA_BASE_URL");
-await DataBase.ConnectToDataBase(dataBaseUrl);
+DataBase.ConfigureDataBase(dataBaseUrl);
+
+string ftpServer = Environment.GetEnvironmentVariable("FTP_SERVER");
+string ftpUsername = Environment.GetEnvironmentVariable("FTP_USERNAME");
+string ftpPassword = Environment.GetEnvironmentVariable("FTP_PASSWORD");
+string storageBaseUrl = Environment.GetEnvironmentVariable("STORAGE_BASE_URL");
+FtpManager.ConfigureFtpServer(ftpServer, ftpUsername, ftpPassword, storageBaseUrl);
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -19,7 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
-builder.Services.AddScoped<AuthorValidationFilter>();
+builder.Services.AddScoped<CreateAuthorValidationFilter>();
+builder.Services.AddScoped<ContentTypeParamValidationFilter>();
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();

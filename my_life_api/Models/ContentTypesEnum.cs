@@ -8,6 +8,7 @@
         Jogos = 4,
         Frases = 5,
         Livros = 6,
-        Seriado  = 7
+        Seriado  = 7,
+        Animes = 8
     }
 }
