@@ -98,7 +98,6 @@ namespace my_life_api.Resources
                     throw new CustomException(400, "Os params enviados são inválidos.");
                 }
                 paramsVerified++;
-                Console.WriteLine(paramsVerified);
 
                 return p.Key == paramName;
             });
