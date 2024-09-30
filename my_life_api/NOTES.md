@@ -1,0 +1,1 @@
+- Updates de todos os itens irão esperar somente os campos que serão realmente ATUALIZADOS
