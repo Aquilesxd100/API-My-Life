@@ -7,7 +7,8 @@ namespace my_life_api.Resources
         static private AsyncFtpClient client;
         static private string storageBaseUrl;
 
-        static readonly string authorPicturesFolder = "author_pictures";
+        public static readonly string authorPicturesFolder = "author_pictures";
+        public static readonly string moviePicturesFolder = "movie_pictures";
 
         public static async Task OpenConnectionIfClosed()
         {
