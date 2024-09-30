@@ -8,12 +8,12 @@ using my_life_api.Models.Requests;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class AutorController : ControllerBase
+    public class AuthorController : ControllerBase
     {
 
-        private readonly ILogger<AutorController> _logger;
+        private readonly ILogger<AuthorController> _logger;
 
-        public AutorController(ILogger<AutorController> logger)
+        public AuthorController(ILogger<AuthorController> logger)
         {
             _logger = logger;
         }

@@ -1,4 +1,5 @@
-﻿using my_life_api.Models;
+﻿using my_life_api.Database.Managers;
+using my_life_api.Models;
 using my_life_api.Models.Requests;
 using my_life_api.Resources;
 
@@ -8,7 +9,8 @@ namespace my_life_api.Services
     {
         public async Task<IEnumerable<AuthorDTO>> GetAuthorsByContentTypeId(ContentTypesEnum contentType)
         {
-            IEnumerable<AuthorDTO> authors = await DataBase.GetAuthorsByContentTypeId((int)contentType);
+            AuthorDBManager authorDbManager = new AuthorDBManager();
+            IEnumerable<AuthorDTO> authors = await authorDbManager.GetAuthorsByContentTypeId((int)contentType);
 
             return authors;
         }
@@ -21,14 +23,16 @@ namespace my_life_api.Services
                 nome = authorReq.nome,      
             };
 
-            int authorId = await DataBase.CreateAuthor(author);
+            AuthorDBManager authorDbManager = new AuthorDBManager();
+
+            int authorId = await authorDbManager.CreateAuthor(author);
             author.id = authorId;
 
             if (authorReq.imagem != null) {
                 string imageUrl = await FtpManager.UploadAuthorPicture(authorId, authorReq.imagem);
                 author.urlImagem = imageUrl;
 
-                await DataBase.UpdateAuthor(author);
+                await authorDbManager.UpdateAuthor(author);
             }
         }
 
