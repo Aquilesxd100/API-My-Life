@@ -59,5 +59,16 @@ namespace my_life_api.Services
 
             await authorDbManager.UpdateAuthor(author);
         }
+
+        public async Task DeleteAuthorImg(AuthorDTO dbAuthor)
+        {
+            string imgExtension = dbAuthor.urlImagem.Split(".")[^1];
+            await FtpManager.DeleteFile($"author-{dbAuthor.id}.{imgExtension}", FtpManager.authorPicturesFolder);
+
+            AuthorDBManager authorDbManager = new AuthorDBManager();
+
+            dbAuthor.urlImagem = null;
+            await authorDbManager.UpdateAuthor(dbAuthor);
+        }
     }
 }

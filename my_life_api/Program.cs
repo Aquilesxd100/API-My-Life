@@ -30,6 +30,7 @@ builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
 builder.Services.AddScoped<CreateAuthorValidationFilter>();
 builder.Services.AddScoped<UpdateAuthorValidationFilter>();
+builder.Services.AddScoped<DeleteAuthorImgValidationFilter>();
 builder.Services.AddScoped<ContentTypeParamValidationFilter>();
 builder.Services.AddScoped<DeleteResourceImgValidationFilter>();
 

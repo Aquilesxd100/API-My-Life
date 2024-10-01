@@ -66,8 +66,7 @@ namespace my_life_api.Controllers
             [FromForm] int id,
             [FromForm] string nome,
             [FromForm] IFormFile imagem
-        )
-        {
+        ) {
             AuthorService service = new AuthorService();
 
             AuthorUpdateRequestDTO authorReq = new AuthorUpdateRequestDTO
@@ -84,6 +83,23 @@ namespace my_life_api.Controllers
             await service.UpdateAuthor(authorReq, dbAuthor);
 
             return Ok(ApiResponse.CreateBody(201, "Autor atualizado com sucesso!"));
+        }
+
+        [HttpDelete("autorImg", Name = "autorImg")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
+        [ServiceFilter(typeof(DeleteAuthorImgValidationFilter))]
+        public async Task<IActionResult> Delete(
+            [FromQuery] string idAutor
+        ) {
+            AuthorService service = new AuthorService();
+
+            AuthorDTO dbAuthor = JsonConvert.DeserializeObject<AuthorDTO>(
+                HttpContext.Request.Headers["requestedItem"]
+            );
+
+            await service.DeleteAuthorImg(dbAuthor);
+
+            return Ok(ApiResponse.CreateBody(200, "A imagem do autor foi excluída com sucesso."));
         }
     }
 }
