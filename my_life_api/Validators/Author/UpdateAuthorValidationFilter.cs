@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
 using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Models.Requests;
 using my_life_api.Resources;
 using my_life_api.Shared;
-using Newtonsoft.Json;
 
 namespace my_life_api.Validators.Author
 {

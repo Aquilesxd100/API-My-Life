@@ -1,7 +1,6 @@
-﻿using my_life_api.Models.Requests;
-using my_life_api.Models;
+﻿using System.Data;
 using MySql.Data.MySqlClient;
-using System.Data;
+using my_life_api.Models.Requests;
 
 namespace my_life_api.Database.Managers
 {

@@ -1,6 +1,6 @@
-﻿using my_life_api.Models;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using my_life_api.Models;
 
 namespace my_life_api.Shared
 {
