@@ -42,7 +42,7 @@ namespace my_life_api.Controllers
         [ServiceFilter(typeof(CreateAuthorValidationFilter))]
         public async Task<IActionResult> Post(
             [FromForm] string nome,
-            [FromForm] short idTipoConteudo,
+            [FromForm] int idTipoConteudo,
             [FromForm] IFormFile imagem
         ){
             AuthorService service = new AuthorService();
