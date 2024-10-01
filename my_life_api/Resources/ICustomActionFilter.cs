@@ -166,28 +166,14 @@ namespace my_life_api.Resources
             }
         }
 
-        public bool IsEmptyValueRequired(StringValues reqValue, Type expectedType)
-        {
-            if (!string.IsNullOrEmpty(reqValue)) return false;
-
-            ImmutableArray<Type> typesToValidate = ImmutableArray.Create(typeof(int), typeof(float), typeof(bool));
-            if (!typesToValidate.Any(ttv => ttv == expectedType)) return false;
-
-            // Verifica se a propriedade esperada é opcional/nullable
-            // ou seja, foi typada com "?" Ex: int?
-            if (
-                !expectedType.IsGenericType ||
-                expectedType.GetGenericTypeDefinition() != typeof(Nullable<>)
-            ) {
-                return true;
-            }
-
-            return false;
-        }
-
-        // Valida o type de todos os campos caso sejam informados e retorna um objeto dynamic
-        // que pode ser convertido para o type passado
-        // Campos INT/FLOAT também tem validação de obrigatoriedade
+        /// <summary>
+        ///     Monta um objeto dinâmico, usando como base o Type genérico informado,
+        ///     também valida obrigatóriedade de campos que não sejam String ou FormData
+        /// </summary>
+        ///     <param name="context">
+        ///         Contexto da requisição
+        ///     </param>
+        /// <returns></returns>
         public async Task<dynamic> GetFormDataContent<T>(ActionExecutingContext context)
         {
             try
@@ -211,7 +197,7 @@ namespace my_life_api.Resources
                         string propertyName = property.Name;
 
                         // Obtém o valor da propriedade esperada da requisição
-                        StringValues reqPropertyValue = formData[propertyName];                    
+                        StringValues reqPropertyValue = formData[propertyName];
 
                         FormDataFieldType? expectedTypeEnum = (MatchedFormDataFieldTypesArray.Get()
                             .FirstOrDefault(ft =>
@@ -219,36 +205,55 @@ namespace my_life_api.Resources
                             )
                         )?.fieldTypeEnum;
 
-                        if (IsEmptyValueRequired(reqPropertyValue, expectedType)) {
-                            invalidFields.Add(new InvalidFieldError(
-                                property.Name,
-                                "Esse campo é obrigatório e não foi informado."
-                            ));
-                            continue;
-                        }
-                        // Valor convertido para o type esperado pelo tipo genérico
-                        object treatedPropertyValue = null;
+                        // Função conversora do valor recebido para o esperado
+                        // se for um valor opcional e vazio roda a função abaixo, retornando null
+                        Func<object> reqValueConverter = () => null;
+
+                        // Se for esperado arquivo
+                        // ou valor do tipo String não aplica regra de obrigatoriedade
+                        bool isFileExpected = expectedTypeEnum == FormDataFieldType.File;
+                        bool isTextExpected = expectedTypeEnum == FormDataFieldType.String;
 
                         // Só tenta converter o valor caso ele tenha sido informado
-                        switch (expectedTypeEnum) {
-                            case FormDataFieldType.String:
-                                treatedPropertyValue = reqPropertyValue.ToString();
+                        if (!string.IsNullOrEmpty(reqPropertyValue) || isFileExpected || isTextExpected) {
+                            switch (expectedTypeEnum) {
+                                case FormDataFieldType.String:
+                                    reqValueConverter = () => reqPropertyValue.ToString();
                                 break;
-                            case FormDataFieldType.Int:
-                                treatedPropertyValue = Int32.Parse(reqPropertyValue);
+                                case FormDataFieldType.Int:
+                                    reqValueConverter = () => Int32.Parse(reqPropertyValue);
                                 break;
-                            case FormDataFieldType.Float:
-                                treatedPropertyValue = float.Parse(reqPropertyValue);
+                                case FormDataFieldType.Float:
+                                    reqValueConverter = () => float.Parse(reqPropertyValue);
                                 break;
-                            case FormDataFieldType.Bool:
-                                treatedPropertyValue = bool.Parse(reqPropertyValue);
+                                case FormDataFieldType.Bool:
+                                    reqValueConverter = () => bool.Parse(reqPropertyValue);
                                 break;
-                            case FormDataFieldType.File:
-                                treatedPropertyValue = formData.Files[propertyName];
+                                case FormDataFieldType.File:
+                                    Console.WriteLine(formData.Files[propertyName].FileName);
+                                    reqValueConverter = () => formData.Files[propertyName];
                                 break;
+                            }
+                        } else {
+                            // Verifica se a propriedade esperada é opcional/nullable
+                            // ou seja, foi typada com "?" Ex: int?
+                            bool isPropertyRequired = !expectedType.IsGenericType || expectedType.GetGenericTypeDefinition() != typeof(Nullable<>);
+
+                            if (isPropertyRequired) {
+                                invalidFields.Add(new InvalidFieldError(
+                                    property.Name,
+                                    "Esse campo é obrigatório e não foi informado."
+                                ));
+                                continue;
+                            }
                         }
 
-                        var propertyToRegister = new KeyValuePair<string, object>(propertyName, treatedPropertyValue);
+                        object convertedValue = reqValueConverter();
+
+                        var propertyToRegister = new KeyValuePair<string, object>(
+                            propertyName,
+                            convertedValue
+                        );
 
                         registeredProperties.Add(propertyToRegister);
 

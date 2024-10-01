@@ -15,7 +15,7 @@ namespace my_life_api.Services
             return authors;
         }
 
-        public async Task CreateAuthor(CreateAuthorRequestDTO authorReq)
+        public async Task CreateAuthor(AuthorCreateRequestDTO authorReq)
         {
             AuthorDTO author = new AuthorDTO
             {
@@ -36,9 +36,28 @@ namespace my_life_api.Services
             }
         }
 
-        //public async Task UpdateAuthor(AuthorDTO author)
-        //{
-        //    await DataBase.UpdateAuthor(author);
-        //}
+        public async Task UpdateAuthor(AuthorUpdateRequestDTO authorReq, AuthorDTO dbAuthor)
+        {
+            AuthorDTO author = new AuthorDTO
+            {
+                id = dbAuthor.id,
+                nome = dbAuthor.nome,
+                urlImagem = dbAuthor.urlImagem,
+                idTipoConteudo = dbAuthor.idTipoConteudo
+            };
+
+            if (authorReq.imagem != null) {
+                string imageUrl = await FtpManager.UploadAuthorPicture((int)authorReq.id, authorReq.imagem);
+                author.urlImagem = imageUrl;
+            }
+
+            if (!string.IsNullOrEmpty(authorReq.nome)) {           
+                author.nome = authorReq.nome;
+            }
+
+            AuthorDBManager authorDbManager = new AuthorDBManager();
+
+            await authorDbManager.UpdateAuthor(author);
+        }
     }
 }

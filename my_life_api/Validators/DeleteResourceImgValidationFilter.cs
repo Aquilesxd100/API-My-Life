@@ -81,7 +81,6 @@ namespace my_life_api.Validators
                 throw new CustomException(400, "Esse recurso não tem imagens registradas.");
             }
 
-            // VALIDAR SE ISSO TA SETANDO DIREITO E LÁ NO CONTROLLER É POSSIVEL ACESSAR
             context.HttpContext.Request.Headers.Add("requestedItem", JsonConvert.SerializeObject(content));
 
             await next();

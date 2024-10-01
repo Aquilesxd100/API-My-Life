@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using my_life_api.Validators;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Models;
 using my_life_api.Models.Requests;
+using my_life_api.Validators.Author;
+using my_life_api.Validators.Security;
 
 namespace my_life_api.Controllers
 {
@@ -44,7 +47,7 @@ namespace my_life_api.Controllers
         ){
             AuthorService service = new AuthorService();
 
-            CreateAuthorRequestDTO authorReq = new CreateAuthorRequestDTO
+            AuthorCreateRequestDTO authorReq = new AuthorCreateRequestDTO
             {
                 nome = nome,
                 idTipoConteudo = idTipoConteudo,
@@ -54,6 +57,33 @@ namespace my_life_api.Controllers
             await service.CreateAuthor(authorReq);
 
             return Ok(ApiResponse.CreateBody(201, "Autor criado com sucesso!"));
+        }
+
+        [HttpPut("autor", Name = "autor")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
+        [ServiceFilter(typeof(UpdateAuthorValidationFilter))]
+        public async Task<IActionResult> Put(
+            [FromForm] int id,
+            [FromForm] string nome,
+            [FromForm] IFormFile imagem
+        )
+        {
+            AuthorService service = new AuthorService();
+
+            AuthorUpdateRequestDTO authorReq = new AuthorUpdateRequestDTO
+            {
+                id = id,
+                nome = nome,
+                imagem = imagem
+            };
+
+            AuthorDTO dbAuthor = JsonConvert.DeserializeObject<AuthorDTO>(
+                HttpContext.Request.Headers["requestedItem"]
+            );
+
+            await service.UpdateAuthor(authorReq, dbAuthor);
+
+            return Ok(ApiResponse.CreateBody(201, "Autor atualizado com sucesso!"));
         }
     }
 }

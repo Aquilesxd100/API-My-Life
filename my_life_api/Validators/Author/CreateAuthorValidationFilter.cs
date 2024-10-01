@@ -4,20 +4,20 @@ using my_life_api.Models.Requests;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.Validators
+namespace my_life_api.Validators.Author
 {
     public class CreateAuthorValidationFilter : ICustomActionFilter
     {
         public override async Task OnActionExecutionAsync(
-            ActionExecutingContext context, 
+            ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            var authorObj = await GetFormDataContent<CreateAuthorRequestDTO>(context);
+            var authorObj = await GetFormDataContent<AuthorCreateRequestDTO>(context);
 
-            CreateAuthorRequestDTO author = new CreateAuthorRequestDTO().BuildFromObj(authorObj);
+            AuthorCreateRequestDTO author = new AuthorCreateRequestDTO().BuildFromObj(authorObj);
 
             if (string.IsNullOrEmpty(author.nome) || author.nome.Trim().Length == 0) {
-                throw new CustomException(400, "Informe o nome do autor pela requisição.");
+                throw new CustomException(400, "O nome do autor é obrigatório e não pode ficar vazio.");
             }
 
             if (author.nome.Length > 50) {
@@ -31,7 +31,7 @@ namespace my_life_api.Validators
             if (author.imagem != null) {
                 if (Validator.IsInvalidImageFormat(author.imagem)) {
                     throw new CustomException(
-                        400, 
+                        400,
                         "A imagem enviada está em formato incorreto, só são permitidas imagens png, jpg e jpeg."
                     );
                 }

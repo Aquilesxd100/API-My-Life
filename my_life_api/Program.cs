@@ -3,6 +3,8 @@ using my_life_api.Validators;
 using my_life_api.Configurations;
 using my_life_api.Middlewares;
 using my_life_api.Database;
+using my_life_api.Validators.Author;
+using my_life_api.Validators.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
@@ -27,6 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
 builder.Services.AddScoped<CreateAuthorValidationFilter>();
+builder.Services.AddScoped<UpdateAuthorValidationFilter>();
 builder.Services.AddScoped<ContentTypeParamValidationFilter>();
 builder.Services.AddScoped<DeleteResourceImgValidationFilter>();
 
