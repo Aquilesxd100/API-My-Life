@@ -83,8 +83,20 @@ namespace my_life_api.Resources
                 campo = _campo;
                 detalhes = _detalhes;
             }
-        } 
+        }
 
+        /// <summary>
+        ///     Tenta buscar o valor de um Param da requisição
+        ///     retornando o valor do primeiro que encontrar,
+        ///     cria uma exceção caso mais de cinco parâmetros estejam presentes
+        /// </summary>
+        ///     <param name="paramName">
+        ///         Nome do parâmetro buscado
+        ///     </param>
+        ///     <param name="context">
+        ///         Contexto da requisição
+        ///     </param>
+        /// <returns></returns>
         public string GetParamValue(
             string paramName,
             ActionExecutingContext context
@@ -105,6 +117,16 @@ namespace my_life_api.Resources
             return param.Value;
         }
 
+        /// <summary>
+        ///     Monta uma instância do Type genérico informado
+        ///     fazendo uso dos campos enviados pelo body da requisição,
+        ///     também valida cada campo e acusa erro caso algum dos dados recebidos
+        ///     seja diferente do esperado
+        /// </summary>
+        ///     <param name="context">
+        ///         Contexto da requisição
+        ///     </param>
+        /// <returns></returns>
         public async Task<T> GetBodyContent<T>(ActionExecutingContext context) {
             context.HttpContext.Request.Body.Position = 0;
 
