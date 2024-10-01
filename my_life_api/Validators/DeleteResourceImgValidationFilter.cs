@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using System.Collections.Immutable;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
 using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
-using Newtonsoft.Json;
-using System.Collections.Immutable;
 
 namespace my_life_api.Validators
 {
@@ -78,7 +78,7 @@ namespace my_life_api.Validators
             }
 
             if (String.IsNullOrEmpty(content.urlImagem)) {
-                throw new CustomException(400, "Esse recurso não tem imagens registradas.");
+                throw new CustomException(400, "Esse recurso não tem imagem registrada.");
             }
 
             context.HttpContext.Request.Headers.Add("requestedItem", JsonConvert.SerializeObject(content));
