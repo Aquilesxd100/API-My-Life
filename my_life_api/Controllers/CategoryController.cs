@@ -7,6 +7,7 @@ using my_life_api.Services;
 using my_life_api.Validators;
 using my_life_api.Validators.Author;
 using my_life_api.Validators.Security;
+using my_life_api.Models.Requests.Category;
 
 namespace my_life_api.Controllers
 {

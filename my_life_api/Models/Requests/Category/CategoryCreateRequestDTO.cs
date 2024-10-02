@@ -1,4 +1,4 @@
-﻿namespace my_life_api.Models.Requests
+﻿namespace my_life_api.Models.Requests.Category
 {
     public class CategoryCreateRequestDTO
     {

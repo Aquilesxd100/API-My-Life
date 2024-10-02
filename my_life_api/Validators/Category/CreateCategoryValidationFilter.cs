@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using my_life_api.Models;
-using my_life_api.Models.Requests;
+using my_life_api.Models.Requests.Category;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
