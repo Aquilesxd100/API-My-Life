@@ -99,6 +99,7 @@ Create Table Series (
   name Varchar(50) Not Null,
   imageUrl Varchar(255),
   rating Decimal(3,1), 
+  dubbed Tinyint(1) Default 0, 
   completed Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
