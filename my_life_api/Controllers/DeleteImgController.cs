@@ -19,7 +19,7 @@ namespace my_life_api.Controllers
             _logger = logger;
         }
 
-        [HttpDelete("deletarimg/resource", Name = "deletarimg/resource")]
+        [HttpDelete("deletarimg/recurso", Name = "deletarimg/recurso")]
         [ServiceFilter(typeof(TokenValidationFilter))]
         [ServiceFilter(typeof(DeleteResourceImgValidationFilter))]
         public async Task<IActionResult> DeleteResourceImg(
