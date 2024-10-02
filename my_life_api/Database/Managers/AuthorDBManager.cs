@@ -48,7 +48,7 @@ namespace my_life_api.Database.Managers
                 "Update Authors " +
                     "Set " +
                         $"name = '{author.nome}'," +
-                        $"imageUrl = {treatedUrlImage}," +
+                        $"imageUrl = {treatedUrlImage}" +
                 $"Where id = {author.id};";
 
             await myCommand.ExecuteReaderAsync();
