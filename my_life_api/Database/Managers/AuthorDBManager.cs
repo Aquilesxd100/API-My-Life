@@ -49,10 +49,9 @@ namespace my_life_api.Database.Managers
                     "Set " +
                         $"name = '{author.nome}'," +
                         $"imageUrl = {treatedUrlImage}," +
-                        $"contentTypeId = {(int)author.idTipoConteudo} " +
                 $"Where id = {author.id};";
 
-            await myCommand.ExecuteScalarAsync();
+            await myCommand.ExecuteReaderAsync();
 
             await DataBase.CloseConnection();
         }

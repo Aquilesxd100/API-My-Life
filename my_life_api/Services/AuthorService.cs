@@ -42,8 +42,7 @@ namespace my_life_api.Services
             {
                 id = dbAuthor.id,
                 nome = dbAuthor.nome,
-                urlImagem = dbAuthor.urlImagem,
-                idTipoConteudo = dbAuthor.idTipoConteudo
+                urlImagem = dbAuthor.urlImagem
             };
 
             if (authorReq.imagem != null) {
