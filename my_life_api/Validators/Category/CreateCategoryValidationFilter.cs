@@ -32,8 +32,6 @@ namespace my_life_api.Validators.Author
                 throw new CustomException(400, "O idTipoConteudo informado não é valido.");
             }
 
-            // VERIFICAR SE ISSO FUNCIONA
-            // TESTAR TD O RESTO TBM
             if (!string.IsNullOrEmpty(category.iconeBase64)) {
                 if (category.iconeBase64.Length > 20000) {
                     throw new CustomException(400, "O iconeBase64 é grande demais.");
