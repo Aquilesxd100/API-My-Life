@@ -24,7 +24,7 @@ namespace my_life_api.Controllers
             AuthorizationService authorizationService = new AuthorizationService();
             
             string token = authorizationService.Login(request.senha);
-            return Ok(ApiResponse.CreateBody(200, "Login efetuado com sucesso.", new { token } ));
+            return Ok(ApiResponse.CreateBody(200, "Login efetuado com sucesso!", new { token } ));
         }
     }
 }

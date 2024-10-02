@@ -33,7 +33,7 @@ namespace my_life_api.Controllers
 
             return Ok(ApiResponse.CreateBody(
                 200,
-                "Lista de categorias recebida com sucesso.",
+                "Lista de categorias recebida com sucesso!",
                 new { categorias = categories }
             ));
         }
