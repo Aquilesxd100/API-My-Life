@@ -32,7 +32,7 @@ namespace my_life_api.Controllers
 
             return Ok(ApiResponse.CreateBody(
                 200, 
-                "Lista de autores recebida com sucesso.",
+                "Lista de autores recebida com sucesso!",
                 new { autores = authors }
             ));
         }
@@ -85,10 +85,24 @@ namespace my_life_api.Controllers
             return Ok(ApiResponse.CreateBody(201, "Autor atualizado com sucesso!"));
         }
 
+        // FALTA TESTAR ESSA ROTA, PRIMEIRO PRECISO CRIAR ESTRUTURA DE "FILMES" A FIM DE TESTAR ISSO
+        [HttpDelete("autor", Name = "autor")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
+        [ServiceFilter(typeof(DeleteAuthorValidationFilter))]
+        public async Task<IActionResult> Delete(
+            [FromQuery] string idAutor
+        ) {
+            AuthorService service = new AuthorService();
+
+            await service.DeleteAuthorById(Int32.Parse(idAutor));
+
+            return Ok(ApiResponse.CreateBody(200, "O autor foi excluído com sucesso!"));
+        }
+
         [HttpDelete("autorImg", Name = "autorImg")]
         [ServiceFilter(typeof(TokenValidationFilter))]
         [ServiceFilter(typeof(DeleteAuthorImgValidationFilter))]
-        public async Task<IActionResult> Delete(
+        public async Task<IActionResult> DeleteImg(
             [FromQuery] string idAutor
         ) {
             AuthorService service = new AuthorService();
@@ -99,7 +113,7 @@ namespace my_life_api.Controllers
 
             await service.DeleteAuthorImg(dbAuthor);
 
-            return Ok(ApiResponse.CreateBody(200, "A imagem do autor foi excluída com sucesso."));
+            return Ok(ApiResponse.CreateBody(200, "A imagem do autor foi excluída com sucesso!"));
         }
     }
 }

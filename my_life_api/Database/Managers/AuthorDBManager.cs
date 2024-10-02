@@ -56,6 +56,22 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
         }
 
+        public async Task DeleteAuthorById(int authorId)
+        {
+            await DataBase.OpenConnectionIfClosed();
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = DataBase.connection;
+
+            myCommand.CommandText =
+                "Delete From Authors " +
+                    $"Where id = {authorId};";
+
+            await myCommand.ExecuteReaderAsync();
+
+            await DataBase.CloseConnection();
+        }
+
         public async Task<AuthorDTO?> GetAuthorById(int authorId)
         {
             await DataBase.OpenConnectionIfClosed();
@@ -113,6 +129,60 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
 
             return authors;
+        }
+
+        public async Task<bool> GetIsAuthorAssignedToWork(AuthorDTO author)
+        {
+            await DataBase.OpenConnectionIfClosed();
+
+            string tableName = "";
+
+            switch (author.idTipoConteudo) {
+                case ContentTypesEnum.Animes:
+                    tableName = "Animes";
+                break;
+                case ContentTypesEnum.Mangas:
+                    tableName = "Mangas";
+                break;
+                case ContentTypesEnum.Seriado:
+                    tableName = "Series";
+                break;
+                case ContentTypesEnum.Livros:
+                    tableName = "Books";
+                break;
+                case ContentTypesEnum.Jogos:
+                    tableName = "Games";
+                break;
+                case ContentTypesEnum.Cinema:
+                    tableName = "Movies";
+                break;
+                case ContentTypesEnum.Frases:
+                    tableName = "Phrases";
+                break;
+                case ContentTypesEnum.Musical:
+                    tableName = "Musics";
+                break;
+            }
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = DataBase.connection;
+            myCommand.CommandText = @" Select id " +
+                $"From {tableName} " +
+                $"Where authorId = {author.id} " +
+                "Limit 1;";
+
+            using var myReader = await myCommand.ExecuteReaderAsync();
+
+            bool isAuthorAssignedToWork = false;
+
+            while (myReader.Read() && !isAuthorAssignedToWork)
+            {
+                isAuthorAssignedToWork = true;
+            }
+
+            await DataBase.CloseConnection();
+
+            return isAuthorAssignedToWork;
         }
     }
 }

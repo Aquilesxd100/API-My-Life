@@ -59,6 +59,13 @@ namespace my_life_api.Services
             await authorDbManager.UpdateAuthor(author);
         }
 
+        public async Task DeleteAuthorById(int idAuthor)
+        {
+            AuthorDBManager authorDbManager = new AuthorDBManager();
+
+            await authorDbManager.DeleteAuthorById(idAuthor);
+        }
+
         public async Task DeleteAuthorImg(AuthorDTO dbAuthor)
         {
             string imgExtension = dbAuthor.urlImagem.Split(".")[^1];
