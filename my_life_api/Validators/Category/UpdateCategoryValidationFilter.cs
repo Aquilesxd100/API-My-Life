@@ -33,8 +33,16 @@ namespace my_life_api.Validators.Author
             }
 
             if (!string.IsNullOrEmpty(category.iconeBase64)) {
+                if (category.iconeBase64.Length > 20000) {
+                    throw new CustomException(400, "O iconeBase64 é grande demais.");
+                }
+
                 if (category.iconeBase64.IndexOf("data:image/") != 0) {
                     throw new CustomException(400, "O iconeBase64 informado não é valido.");
+                }
+
+                if (Validator.HasInvalidCharacters(category.iconeBase64)) {
+                    throw new CustomException(400, "O iconeBase64 tem caracteres inválidos.");
                 }
             }
 
