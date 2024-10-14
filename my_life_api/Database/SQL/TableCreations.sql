@@ -106,7 +106,7 @@ Create Table Series (
   Foreign Key (authorId) References Authors(id)
 );
 
-Create Table Serie_x_Category (
+Create Table Series_x_Category (
   id Integer Auto_Increment Primary Key,
   serieId Integer Not Null,
   Foreign Key (serieId) References Series(id),
