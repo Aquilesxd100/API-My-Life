@@ -33,7 +33,7 @@ namespace my_life_api.Validators.Author
             }
 
             if (!string.IsNullOrEmpty(category.iconeBase64)) {
-                if (category.iconeBase64.Length > 20000) {
+                if (category.iconeBase64.Length > 400000) {
                     throw new CustomException(400, "O iconeBase64 é grande demais.");
                 }
 
