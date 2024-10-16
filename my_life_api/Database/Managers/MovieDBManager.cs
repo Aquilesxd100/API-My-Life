@@ -6,7 +6,7 @@ using my_life_api.Resources;
 
 namespace my_life_api.Database.Managers
 {
-    public class MovieDBManager : ContentDBManager
+    public class MovieDBManager : BaseDBManager
     {
         public async Task<int> CreateMovie(MovieDTO movie)
         {
@@ -99,7 +99,7 @@ namespace my_life_api.Database.Managers
                 "From Movies " +
                 "Left Join Authors a " +
                     "On authorId = a.id " +
-                MountConditionalQueryPart(filters, "Movie_x_Category", "Movies") + ";";
+                MountConditionalQueryPartByFilters(filters, "Movie_x_Category", "Movies") + ";";
 
             List<MovieDTO> movies = new List<MovieDTO>();
             using var myReader = await myCommand.ExecuteReaderAsync();

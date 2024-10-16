@@ -2,10 +2,11 @@
 using MySql.Data.MySqlClient;
 using my_life_api.Models.Requests;
 using my_life_api.Models;
+using my_life_api.Resources;
 
 namespace my_life_api.Database.Managers
 {
-    public class AuthorDBManager
+    public class AuthorDBManager : BaseDBManager
     {
         public async Task<int> CreateAuthor(AuthorDTO author)
         {
@@ -135,34 +136,7 @@ namespace my_life_api.Database.Managers
         {
             await DataBase.OpenConnectionIfClosed();
 
-            string tableName = "";
-
-            switch (author.idTipoConteudo) {
-                case ContentTypesEnum.Animes:
-                    tableName = "Animes";
-                break;
-                case ContentTypesEnum.Mangas:
-                    tableName = "Mangas";
-                break;
-                case ContentTypesEnum.Seriado:
-                    tableName = "Series";
-                break;
-                case ContentTypesEnum.Livros:
-                    tableName = "Books";
-                break;
-                case ContentTypesEnum.Jogos:
-                    tableName = "Games";
-                break;
-                case ContentTypesEnum.Cinema:
-                    tableName = "Movies";
-                break;
-                case ContentTypesEnum.Frases:
-                    tableName = "Phrases";
-                break;
-                case ContentTypesEnum.Musical:
-                    tableName = "Musics";
-                break;
-            }
+            string tableName = GetTableNameByContentType((ContentTypesEnum)author.idTipoConteudo);
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = DataBase.connection;

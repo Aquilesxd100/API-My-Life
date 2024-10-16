@@ -2,10 +2,11 @@
 using MySql.Data.MySqlClient;
 using my_life_api.Models.Requests;
 using my_life_api.Models;
+using my_life_api.Resources;
 
 namespace my_life_api.Database.Managers
 {
-    public class CategoryDBManager
+    public class CategoryDBManager : BaseDBManager
     {
         public async Task CreateCategory(CategoryDTO category)
         {
@@ -71,34 +72,7 @@ namespace my_life_api.Database.Managers
             int categoryId, 
             ContentTypesEnum contentType
         ) {
-            string contentName = "";
-
-            switch (contentType) {
-                case ContentTypesEnum.Animes:
-                    contentName = "Anime";
-                break;
-                case ContentTypesEnum.Mangas:
-                    contentName = "Manga";
-                break;
-                case ContentTypesEnum.Seriado:
-                    contentName = "Series";
-                break;
-                case ContentTypesEnum.Livros:
-                    contentName = "Book";
-                break;
-                case ContentTypesEnum.Jogos:
-                    contentName = "Game";
-                break;
-                case ContentTypesEnum.Cinema:
-                    contentName = "Movie";
-                break;
-                case ContentTypesEnum.Frases:
-                    contentName = "Phrase";
-                break;
-                case ContentTypesEnum.Musical:
-                    contentName = "Music";
-                break;
-            }
+            string contentName = GetContentNameByContentType(contentType);
 
             await DataBase.OpenConnectionIfClosed();
 

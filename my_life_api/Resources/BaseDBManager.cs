@@ -6,7 +6,7 @@ using my_life_api.Models.Requests;
 
 namespace my_life_api.Resources
 {
-    public abstract class ContentDBManager
+    public abstract class BaseDBManager
     {
         public string GetTreatedRatingValue(float rating)
         {
@@ -15,7 +15,7 @@ namespace my_life_api.Resources
             return $"'{treatedFloatValue.ToString("F2").Replace(',', '.')}'";
         }
 
-        public string MountConditionalQueryPart(
+        public string MountConditionalQueryPartByFilters(
             ContentFilters filters, 
             string? categoryRelationTableName = "",
             string? contentTableName = ""
@@ -76,36 +76,8 @@ namespace my_life_api.Resources
         ) {
             await DataBase.OpenConnectionIfClosed();
 
-            string relationTableName = "";
-            string contentIdFieldName = "";
-
-            switch (categoryType) {
-                case ContentTypesEnum.Animes:
-                    relationTableName = "Anime";
-                    contentIdFieldName = "animeId";
-                break;
-                case ContentTypesEnum.Mangas:
-                    relationTableName = "Manga";
-                    contentIdFieldName = "mangaId";
-                break;
-                case ContentTypesEnum.Seriado:
-                    relationTableName = "Series";
-                    contentIdFieldName = "serieId";
-                break;
-                case ContentTypesEnum.Livros:
-                    relationTableName = "Book";
-                    contentIdFieldName = "bookId";
-                break;
-                case ContentTypesEnum.Jogos:
-                    relationTableName = "Game";
-                    contentIdFieldName = "gameId";
-                break;
-                case ContentTypesEnum.Cinema:
-                    relationTableName = "Movie";
-                    contentIdFieldName = "movieId";
-                break;
-            }
-            relationTableName += "_x_Category";
+            string relationTableName = GetContentNameByContentType(categoryType) + "_x_Category";
+            string contentIdFieldName = GetContentNameByContentType(categoryType).ToLower() + "Id";
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = DataBase.connection;
@@ -137,5 +109,51 @@ namespace my_life_api.Resources
 
             return categories;
         }
+
+        public string GetTableNameByContentType(ContentTypesEnum contentType)
+        {
+            string tableName = "";
+
+            switch(contentType) {
+                case ContentTypesEnum.Animes:
+                    tableName = "Animes";
+                break;
+                case ContentTypesEnum.Mangas:
+                    tableName = "Mangas";
+                break;
+                case ContentTypesEnum.Seriado:
+                    tableName = "Series";
+                break;
+                case ContentTypesEnum.Livros:
+                    tableName = "Books";
+                break;
+                case ContentTypesEnum.Jogos:
+                    tableName = "Games";
+                break;
+                case ContentTypesEnum.Cinema:
+                    tableName = "Movies";
+                break;
+                case ContentTypesEnum.Musical:
+                    tableName = "Musics";
+                break;
+                case ContentTypesEnum.Frases:
+                    tableName = "Phrases";
+                break;
+            }
+
+            return tableName;
+        }
+        public string GetContentNameByContentType(ContentTypesEnum contentType)
+        {
+            string contentName = GetTableNameByContentType(contentType);
+
+            // Caso nao seja serie remove o 'S' do final para indicar singular
+            if (contentType != ContentTypesEnum.Seriado) {
+                contentName = contentName.Remove(contentName.Length - 1);
+            }
+
+            return contentName;
+        }
+
     }
 }
