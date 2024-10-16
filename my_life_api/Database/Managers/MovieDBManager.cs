@@ -12,9 +12,14 @@ namespace my_life_api.Database.Managers
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id, name, imageUrl, rating, dubbed, soulFragment, authorId " +
+            myCommand.CommandText = "Select " + 
+                "Movies.id As movie_id, Movies.name As movie_name, Movies.imageUrl As movie_imageUrl, " + 
+                "rating, dubbed, soulFragment, authorId, " +
+                "Authors.id As author_id, Authors.name As author_name, Authors.imageUrl As author_imageUrl " +
                 "From Movies " +
-                $"Where id = {movieId};";
+                "Inner Join Authors " +
+                    "On authorId = Authors.id " +
+                $"Where Movies.id = {movieId};";
 
             MovieDTO movie = null;
             using var myReader = await myCommand.ExecuteReaderAsync();
@@ -23,13 +28,17 @@ namespace my_life_api.Database.Managers
             {
                 movie = new MovieDTO()
                 {
-                    id = myReader.GetInt32("id"),
-                    nome = myReader.GetString("name"),
-                    urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
+                    id = myReader.GetInt32("movie_id"),
+                    nome = myReader.GetString("movie_name"),
+                    urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
                     nota = myReader.GetFloat("rating"),
                     dublado = myReader.GetBoolean("dubbed"),
                     fragmentoAlma = myReader.GetBoolean("soulFragment"),
-                    idAutor = myReader.GetInt32("authorId"),
+                    autor = new AuthorDTO() {
+                        id = myReader.GetInt32("author_id"),
+                        nome = myReader.GetString("author_name"),
+                        urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
+                    },
                 };
             }
 
