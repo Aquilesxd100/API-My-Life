@@ -12,7 +12,7 @@ using my_life_api.Models.Requests.Category;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoryController : CustomControllerBase
     {
 
         private readonly ILogger<CategoryController> _logger;
@@ -85,6 +85,37 @@ namespace my_life_api.Controllers
             await service.UpdateCategory(categoryReq, dbCategory);
 
             return Ok(ApiResponse.CreateBody(200, "Categoria atualizada com sucesso!"));
+        }
+
+        [HttpDelete("categoria", Name = "categoria")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
+        [ServiceFilter(typeof(DeleteCategoryValidationFilter))]
+        public async Task<IActionResult> Delete([FromQuery] string idCategoria) {
+            CategoryService service = new CategoryService();
+
+            CategoryDTO dbCategory = JsonConvert.DeserializeObject<CategoryDTO>(
+                HttpContext.Request.Headers["requestedItem"]
+            );
+
+            await service.DeleteCategory(dbCategory);
+
+            return Ok(ApiResponse.CreateBody(200, "A categoria foi excluída com sucesso!"));
+        }
+
+        [HttpDelete("categoriaIcone", Name = "categoriaIcone")]
+        [ServiceFilter(typeof(TokenValidationFilter))]
+        [ServiceFilter(typeof(DeleteCategoryValidationFilter))]
+        public async Task<IActionResult> DeleteIcone([FromQuery] string idCategoria)
+        {
+            CategoryService service = new CategoryService();
+
+            CategoryDTO dbCategory = JsonConvert.DeserializeObject<CategoryDTO>(
+                HttpContext.Request.Headers["requestedItem"]
+            );
+
+            await service.DeleteCategoryIcon(dbCategory);
+
+            return Ok(ApiResponse.CreateBody(200, "O ícone da categoria foi excluído com sucesso!"));
         }
     }
 }

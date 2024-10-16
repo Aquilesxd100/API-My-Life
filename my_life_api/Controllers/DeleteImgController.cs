@@ -9,7 +9,7 @@ using my_life_api.Validators.Security;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class DeleteImgController : ControllerBase
+    public class DeleteImgController : CustomControllerBase
     {
 
         private readonly ILogger<DeleteImgController> _logger;
