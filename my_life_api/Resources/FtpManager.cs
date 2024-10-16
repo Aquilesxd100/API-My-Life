@@ -1,4 +1,5 @@
 ﻿using FluentFTP;
+using my_life_api.Models;
 
 namespace my_life_api.Resources
 {
@@ -9,6 +10,11 @@ namespace my_life_api.Resources
 
         public static readonly string authorPicturesFolder = "author_pictures";
         public static readonly string moviePicturesFolder = "movie_pictures";
+        public static readonly string animePicturesFolder = "anime_pictures";
+        public static readonly string mangaPicturesFolder = "manga_pictures";
+        public static readonly string seriesPicturesFolder = "series_pictures";
+        public static readonly string bookPicturesFolder = "book_pictures";
+        public static readonly string gamePicturesFolder = "game_pictures";
 
         public static async Task OpenConnectionIfClosed()
         {
@@ -61,7 +67,7 @@ namespace my_life_api.Resources
         {
             await OpenConnectionIfClosed();
 
-            string fileName = GetImageName(authorId, image, "author-");
+            string fileName = GenerateImageName(authorId, image, "author-");
 
             await UploadFile(fileName, image, $"{authorPicturesFolder}");
 
@@ -71,13 +77,65 @@ namespace my_life_api.Resources
             return pictureUrl;
         }
 
-        private static string GetImageName(int id, IFormFile img, string prefix = null)
+        public static async Task<string> UploadResourcePicture(
+            int resourceId,
+            ContentTypesEnum contentType,  
+            IFormFile image
+        ) {
+            string prefixFileName = "";
+            string folderName = "";
+
+            switch (contentType) {
+                case ContentTypesEnum.Animes:
+                    prefixFileName = "anime-";
+                    folderName = animePicturesFolder;
+                break;
+                case ContentTypesEnum.Mangas:
+                    prefixFileName = "manga-";
+                    folderName = mangaPicturesFolder;
+                break;
+                case ContentTypesEnum.Seriado:
+                    prefixFileName = "series-";
+                    folderName = seriesPicturesFolder;
+                break;
+                case ContentTypesEnum.Livros:
+                    prefixFileName = "book-";
+                    folderName = bookPicturesFolder;
+                break;
+                case ContentTypesEnum.Jogos:
+                    prefixFileName = "game-";
+                    folderName = gamePicturesFolder;
+                break;
+                case ContentTypesEnum.Cinema:
+                    prefixFileName = "movie-";
+                    folderName = moviePicturesFolder;
+                break;
+            }
+
+            await OpenConnectionIfClosed();
+
+            string fileName = GenerateImageName(resourceId, image, prefixFileName);
+
+            await UploadFile(fileName, image, $"{folderName}");
+
+            await CloseConnection();
+
+            string pictureUrl = $"{storageBaseUrl}/{folderName}/{fileName}";
+            return pictureUrl;
+        }
+
+        private static string GenerateImageName(int id, IFormFile img, string prefix = null)
         {
             string mimeType = img.ContentType;
             string imgExtension = "." + mimeType.Substring(mimeType.IndexOf("/") + 1);
             string fileName =  (prefix ?? "") + id + imgExtension;
 
             return fileName;
+        }
+
+        public static string GetImageNameFromUrl(string url)
+        {
+            return url.Split('/')[^1];
         }
     }
 }

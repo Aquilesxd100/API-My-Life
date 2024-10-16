@@ -12,7 +12,7 @@ using my_life_api.Models.Requests.Author;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorController : CustomControllerBase
     {
 
         private readonly ILogger<AuthorController> _logger;
@@ -86,7 +86,6 @@ namespace my_life_api.Controllers
             return Ok(ApiResponse.CreateBody(201, "Autor atualizado com sucesso!"));
         }
 
-        // FALTA TESTAR ESSA ROTA, PRIMEIRO PRECISO CRIAR ESTRUTURA DE "FILMES" A FIM DE TESTAR ISSO
         [HttpDelete("autor", Name = "autor")]
         [ServiceFilter(typeof(TokenValidationFilter))]
         [ServiceFilter(typeof(DeleteAuthorValidationFilter))]
