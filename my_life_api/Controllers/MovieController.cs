@@ -24,7 +24,7 @@ namespace my_life_api.Controllers
 
         [HttpGet("filmes", Name = "filmes")]
         [ServiceFilter(typeof(TokenValidationFilter))]
-        [ServiceFilter(typeof(ResourceFiltersParamValidationFilter))]
+        [ServiceFilter(typeof(ContentFiltersParamValidationFilter))]
         public async Task<IActionResult> Get(
             [FromQuery] string fragmentoAlma,
             [FromQuery] string idAutor,
@@ -34,7 +34,7 @@ namespace my_life_api.Controllers
             [FromQuery] string nome,
             [FromQuery] string dublado
         ) {
-            ResourceFilters filters = new ResourceFilters()
+            ContentFilters filters = new ContentFilters()
             {
                 soulFragment = fragmentoAlma != null ? (fragmentoAlma == "true") : null,
                 authorId = idAutor != null ? Int32.Parse(idAutor) : null,

@@ -6,10 +6,10 @@ namespace my_life_api.Services
 {
     public class DeleteImgService
     {
-        public async Task DeleteResourceImg(ContentTypesEnum contentType, dynamic requestedItem)
+        public async Task DeleteContentImg(ContentTypesEnum contentType, dynamic requestedItem)
         {
-            int resourceId = (int)requestedItem.id;
-            string resourceImageUrl = (string)requestedItem.urlImagem;
+            int contentId = (int)requestedItem.id;
+            string contentImageUrl = (string)requestedItem.urlImagem;
 
             switch (contentType)
             {
@@ -30,11 +30,11 @@ namespace my_life_api.Services
                 break;
                 case ContentTypesEnum.Cinema:
                     MovieDBManager movieDbManager = new MovieDBManager();
-                    await movieDbManager.UpdateMovieImageUrlById(resourceId, null);
+                    await movieDbManager.UpdateMovieImageUrlById(contentId, null);
 
-                    string reqResourceExt = resourceImageUrl.Split(".")[^1];
+                    string reqContentExt = contentImageUrl.Split(".")[^1];
                     await FtpManager.DeleteFile(
-                        $"movie-{resourceId}.{reqResourceExt}", 
+                        $"movie-{contentId}.{reqContentExt}", 
                         FtpManager.moviePicturesFolder
                     );
                 break;

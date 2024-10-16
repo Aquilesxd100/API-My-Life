@@ -6,7 +6,7 @@ using my_life_api.Models.Requests;
 
 namespace my_life_api.Resources
 {
-    public abstract class ResourceDBManager
+    public abstract class ContentDBManager
     {
         public string GetTreatedRatingValue(float rating)
         {
@@ -16,9 +16,9 @@ namespace my_life_api.Resources
         }
 
         public string MountConditionalQueryPart(
-            ResourceFilters filters, 
+            ContentFilters filters, 
             string? categoryRelationTableName = "",
-            string? resourceTableName = ""
+            string? contentTableName = ""
         ) {
             string conditionalQueryPart = "";
             List<string> conditionals = new List<string>();
@@ -56,9 +56,9 @@ namespace my_life_api.Resources
                 conditionals.Add($"rating <= '{filters.ratingLesserEqualTo}'");
 
             if (!string.IsNullOrEmpty(filters.name)) {
-                string nameColumn = string.IsNullOrEmpty(resourceTableName)
+                string nameColumn = string.IsNullOrEmpty(contentTableName)
                     ? "name"
-                    : $"{resourceTableName}.name";
+                    : $"{contentTableName}.name";
 
                 conditionals.Add($"{nameColumn} Like '%{filters.name}%'");
             }
@@ -70,39 +70,39 @@ namespace my_life_api.Resources
             return conditionalQueryPart;
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetCategoriesByResourceId(
-            int resourceId,
+        public async Task<IEnumerable<CategoryDTO>> GetCategoriesByContentId(
+            int contentId,
             ContentTypesEnum categoryType
         ) {
             await DataBase.OpenConnectionIfClosed();
 
             string relationTableName = "";
-            string resourceIdFieldName = "";
+            string contentIdFieldName = "";
 
             switch (categoryType) {
                 case ContentTypesEnum.Animes:
                     relationTableName = "Anime";
-                    resourceIdFieldName = "animeId";
+                    contentIdFieldName = "animeId";
                 break;
                 case ContentTypesEnum.Mangas:
                     relationTableName = "Manga";
-                    resourceIdFieldName = "mangaId";
+                    contentIdFieldName = "mangaId";
                 break;
                 case ContentTypesEnum.Seriado:
                     relationTableName = "Series";
-                    resourceIdFieldName = "serieId";
+                    contentIdFieldName = "serieId";
                 break;
                 case ContentTypesEnum.Livros:
                     relationTableName = "Book";
-                    resourceIdFieldName = "bookId";
+                    contentIdFieldName = "bookId";
                 break;
                 case ContentTypesEnum.Jogos:
                     relationTableName = "Game";
-                    resourceIdFieldName = "gameId";
+                    contentIdFieldName = "gameId";
                 break;
                 case ContentTypesEnum.Cinema:
                     relationTableName = "Movie";
-                    resourceIdFieldName = "movieId";
+                    contentIdFieldName = "movieId";
                 break;
             }
             relationTableName += "_x_Category";
@@ -115,7 +115,7 @@ namespace my_life_api.Resources
                     "iconBase64, contentTypeId " +
                 "From Categories " +
                 $"Inner Join {relationTableName} " +
-                    $"On {relationTableName}.{resourceIdFieldName} = {resourceId} " +
+                    $"On {relationTableName}.{contentIdFieldName} = {contentId} " +
                 $"Where {relationTableName}.categoryId = Categories.id;";
 
             List<CategoryDTO> categories = new List<CategoryDTO>();

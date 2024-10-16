@@ -7,7 +7,7 @@ using my_life_api.Resources;
 
 namespace my_life_api.Validators
 {
-    public class DeleteResourceImgValidationFilter : ICustomActionFilter
+    public class DeleteContentImgValidationFilter : ICustomActionFilter
     {
         public static readonly ImmutableArray<int> validContentTypesIds = ImmutableArray.Create(
             (int)ContentTypesEnum.Mangas,
@@ -23,22 +23,22 @@ namespace my_life_api.Validators
             ActionExecutionDelegate next
         ){
             string contentTypeId = GetParamValue("idTipoConteudo", context);
-            string resourceId = GetParamValue("idRecurso", context);
+            string contentId = GetParamValue("idConteudo", context);
 
             if (string.IsNullOrEmpty(contentTypeId)) {
                 throw new CustomException(400, "O param 'idTipoConteudo' é obrigatório e não foi informado.");
             }
 
-            if (string.IsNullOrEmpty(resourceId)) {
-                throw new CustomException(400, "O param 'idRecurso' é obrigatório e não foi informado.");
+            if (string.IsNullOrEmpty(contentId)) {
+                throw new CustomException(400, "O param 'idConteudo' é obrigatório e não foi informado.");
             }
 
             int convertedContentTypeId = 0;
-            int convertedResourceId = 0;
+            int convertedContentId = 0;
 
             try {
                 convertedContentTypeId = Int32.Parse(contentTypeId);
-                convertedResourceId = Int32.Parse(resourceId);
+                convertedContentId = Int32.Parse(contentId);
             } catch (Exception exception) { }
 
             if (!validContentTypesIds.Contains(convertedContentTypeId)) {
@@ -69,16 +69,16 @@ namespace my_life_api.Validators
                 break;
                 case ContentTypesEnum.Cinema:
                     MovieDBManager movieDbManager = new MovieDBManager();
-                    content = await movieDbManager.GetMovieById(convertedResourceId);
+                    content = await movieDbManager.GetMovieById(convertedContentId);
                 break;
             }
 
             if (content == null) {
-                throw new CustomException(404, "Nenhum recurso com esse id foi encontrado.");
+                throw new CustomException(404, "Nenhum conteúdo com esse id foi encontrado.");
             }
 
             if (String.IsNullOrEmpty(content.urlImagem)) {
-                throw new CustomException(400, "Esse recurso não tem imagem registrada.");
+                throw new CustomException(400, "Esse conteudo não tem imagem registrada.");
             }
 
             context.HttpContext.Request.Headers.Add("requestedItem", JsonConvert.SerializeObject(content));

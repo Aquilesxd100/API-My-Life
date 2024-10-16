@@ -88,8 +88,8 @@ namespace my_life_api.Configurations
             services.AddScoped<DeleteCategoryValidationFilter>();
 
             services.AddScoped<ContentTypeParamValidationFilter>();
-            services.AddScoped<ResourceFiltersParamValidationFilter>();
-            services.AddScoped<DeleteResourceImgValidationFilter>();
+            services.AddScoped<ContentFiltersParamValidationFilter>();
+            services.AddScoped<DeleteContentImgValidationFilter>();
 
             services.AddScoped<CreateMovieValidationFilter>();
             services.AddScoped<UpdateMovieValidationFilter>();

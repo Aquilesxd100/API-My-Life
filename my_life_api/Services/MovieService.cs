@@ -8,7 +8,7 @@ namespace my_life_api.Services
 {
     public class MovieService
     {
-        public async Task<IEnumerable<MovieDTO>> GetMovies(ResourceFilters filters)
+        public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters)
         {
             MovieDBManager movieDbManager = new MovieDBManager();
             IEnumerable<MovieDTO> movies = await movieDbManager.GetMovies(filters);
@@ -33,7 +33,7 @@ namespace my_life_api.Services
             movie.id = movieId;
 
             if (movieReq.imagem != null) {
-                string imageUrl = await FtpManager.UploadResourcePicture(
+                string imageUrl = await FtpManager.UploadContentPicture(
                     movieId, 
                     ContentTypesEnum.Cinema, 
                     movieReq.imagem
@@ -62,7 +62,7 @@ namespace my_life_api.Services
             };
 
             if (movieReq.imagem != null) {
-                string imageUrl = await FtpManager.UploadResourcePicture(
+                string imageUrl = await FtpManager.UploadContentPicture(
                     (int)movieReq.id, 
                     ContentTypesEnum.Cinema,
                     movieReq.imagem

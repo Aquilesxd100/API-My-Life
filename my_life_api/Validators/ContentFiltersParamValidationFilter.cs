@@ -5,7 +5,7 @@ using my_life_api.Shared;
 
 namespace my_life_api.Validators
 {
-    public class ResourceFiltersParamValidationFilter : ICustomActionFilter
+    public class ContentFiltersParamValidationFilter : ICustomActionFilter
     {
         public override async Task OnActionExecutionAsync(
             ActionExecutingContext context,

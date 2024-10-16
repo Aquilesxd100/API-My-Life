@@ -1,6 +1,6 @@
 ﻿namespace my_life_api.Models
 {
-    public class ResourceFilters
+    public class ContentFilters
     {
         // Filtros globais
         public bool? soulFragment { get; set; }

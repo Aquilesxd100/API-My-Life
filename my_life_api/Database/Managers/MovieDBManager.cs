@@ -6,7 +6,7 @@ using my_life_api.Resources;
 
 namespace my_life_api.Database.Managers
 {
-    public class MovieDBManager : ResourceDBManager
+    public class MovieDBManager : ContentDBManager
     {
         public async Task<int> CreateMovie(MovieDTO movie)
         {
@@ -85,7 +85,7 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
         }
 
-        public async Task<IEnumerable<MovieDTO>> GetMovies(ResourceFilters filters)
+        public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters)
         {
             await DataBase.OpenConnectionIfClosed();
 
@@ -127,7 +127,7 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
 
             foreach (MovieDTO movie in movies) {
-                IEnumerable<CategoryDTO> categories = await GetCategoriesByResourceId(
+                IEnumerable<CategoryDTO> categories = await GetCategoriesByContentId(
                     (int)movie.id, ContentTypesEnum.Cinema
                 );
 

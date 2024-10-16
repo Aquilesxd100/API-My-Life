@@ -77,8 +77,8 @@ namespace my_life_api.Resources
             return pictureUrl;
         }
 
-        public static async Task<string> UploadResourcePicture(
-            int resourceId,
+        public static async Task<string> UploadContentPicture(
+            int contentId,
             ContentTypesEnum contentType,  
             IFormFile image
         ) {
@@ -114,7 +114,7 @@ namespace my_life_api.Resources
 
             await OpenConnectionIfClosed();
 
-            string fileName = GenerateImageName(resourceId, image, prefixFileName);
+            string fileName = GenerateImageName(contentId, image, prefixFileName);
 
             await UploadFile(fileName, image, $"{folderName}");
 

@@ -19,20 +19,20 @@ namespace my_life_api.Controllers
             _logger = logger;
         }
 
-        [HttpDelete("deletarimg/recurso", Name = "deletarimg/recurso")]
+        [HttpDelete("deletarimg/conteudo", Name = "deletarimg/conteudo")]
         [ServiceFilter(typeof(TokenValidationFilter))]
-        [ServiceFilter(typeof(DeleteResourceImgValidationFilter))]
-        public async Task<IActionResult> DeleteResourceImg(
+        [ServiceFilter(typeof(DeleteContentImgValidationFilter))]
+        public async Task<IActionResult> DeleteContentImg(
             [FromQuery] string idTipoConteudo,
-            [FromQuery] string idRecurso
+            [FromQuery] string idConteudo
         )
         {
             ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
-            int resourceId = Int32.Parse(idRecurso);
+            int resourceId = Int32.Parse(idConteudo);
             dynamic requestedItem = JsonConvert.DeserializeObject(HttpContext.Request.Headers["requestedItem"]);
 
             DeleteImgService service = new DeleteImgService();
-            await service.DeleteResourceImg(contentTypeId, requestedItem);
+            await service.DeleteContentImg(contentTypeId, requestedItem);
 
             return Ok(ApiResponse.CreateBody(
                 200,
