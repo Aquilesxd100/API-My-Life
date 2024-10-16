@@ -14,6 +14,8 @@
 
         public bool fragmentoAlma { get; set; }
 
-        public int idAutor { get; set; }
+        public AuthorDTO? autor { get; set; }
+
+        public IEnumerable<CategoryDTO>? categorias { get; set; }
     }
 }

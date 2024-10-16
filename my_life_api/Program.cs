@@ -28,13 +28,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<TokenValidationFilter>();
 builder.Services.AddScoped<LoginValidationFilter>();
+builder.Services.AddScoped<CreateMovieValidationFilter>();
+builder.Services.AddScoped<UpdateMovieValidationFilter>();
+builder.Services.AddScoped<DeleteMovieValidationFilter>();
 builder.Services.AddScoped<CreateAuthorValidationFilter>();
 builder.Services.AddScoped<UpdateAuthorValidationFilter>();
 builder.Services.AddScoped<DeleteAuthorValidationFilter>();
 builder.Services.AddScoped<DeleteAuthorImgValidationFilter>();
 builder.Services.AddScoped<CreateCategoryValidationFilter>();
 builder.Services.AddScoped<UpdateCategoryValidationFilter>();
+builder.Services.AddScoped<DeleteCategoryValidationFilter>();
 builder.Services.AddScoped<ContentTypeParamValidationFilter>();
+builder.Services.AddScoped<ResourceFiltersParamValidationFilter>();
 builder.Services.AddScoped<DeleteResourceImgValidationFilter>();
 
 var app = builder.Build();

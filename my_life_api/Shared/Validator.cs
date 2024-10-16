@@ -52,5 +52,9 @@ namespace my_life_api.Shared
 
             return !match.Success;
         }
+
+        public static bool IsRatingInvalid(float value) {
+            return value < 0 || value > 10;
+        }
     }
 }
