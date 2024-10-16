@@ -1,6 +1,9 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
 using my_life_api.Resources;
+using my_life_api.Validators.Author;
+using my_life_api.Validators.Security;
+using my_life_api.Validators;
 
 namespace my_life_api.Configurations
 {
@@ -69,6 +72,28 @@ namespace my_life_api.Configurations
                         ));
                 }        
             };
+        }
+
+        public void AddValidationScopes(IServiceCollection services) {
+            services.AddScoped<TokenValidationFilter>();
+            services.AddScoped<LoginValidationFilter>();
+
+            services.AddScoped<CreateAuthorValidationFilter>();
+            services.AddScoped<UpdateAuthorValidationFilter>();
+            services.AddScoped<DeleteAuthorValidationFilter>();
+            services.AddScoped<DeleteAuthorImgValidationFilter>();
+
+            services.AddScoped<CreateCategoryValidationFilter>();
+            services.AddScoped<UpdateCategoryValidationFilter>();
+            services.AddScoped<DeleteCategoryValidationFilter>();
+
+            services.AddScoped<ContentTypeParamValidationFilter>();
+            services.AddScoped<ResourceFiltersParamValidationFilter>();
+            services.AddScoped<DeleteResourceImgValidationFilter>();
+
+            services.AddScoped<CreateMovieValidationFilter>();
+            services.AddScoped<UpdateMovieValidationFilter>();
+            services.AddScoped<DeleteMovieValidationFilter>();
         }
     }
 }
