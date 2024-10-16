@@ -51,5 +51,21 @@ namespace my_life_api.Services
 
             await categoryDbManager.UpdateCategory(category);
         }
+
+        public async Task DeleteCategory(CategoryDTO category)
+        {
+            CategoryDBManager categoryDbManager = new CategoryDBManager();
+
+            await categoryDbManager.DeleteCategoryRelations(category.id, category.idTipoConteudo);
+            await categoryDbManager.DeleteCategoryById(category.id);
+        }
+
+        public async Task DeleteCategoryIcon(CategoryDTO category)
+        {
+            CategoryDBManager categoryDbManager = new CategoryDBManager();
+
+            category.iconeBase64 = null;
+            await categoryDbManager.UpdateCategory(category);
+        }
     }
 }

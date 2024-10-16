@@ -52,13 +52,74 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
         }
 
+        public async Task DeleteCategoryById(int categoryId)
+        {
+            await DataBase.OpenConnectionIfClosed();
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = DataBase.connection;
+            myCommand.CommandText =
+                "Delete From Categories " +
+                    $"Where id = {categoryId};";
+
+            await myCommand.ExecuteReaderAsync();
+
+            await DataBase.CloseConnection();
+        }
+
+        public async Task DeleteCategoryRelations(
+            int categoryId, 
+            ContentTypesEnum contentType
+        ) {
+            string contentName = "";
+
+            switch (contentType) {
+                case ContentTypesEnum.Animes:
+                    contentName = "Anime";
+                break;
+                case ContentTypesEnum.Mangas:
+                    contentName = "Manga";
+                break;
+                case ContentTypesEnum.Seriado:
+                    contentName = "Series";
+                break;
+                case ContentTypesEnum.Livros:
+                    contentName = "Book";
+                break;
+                case ContentTypesEnum.Jogos:
+                    contentName = "Game";
+                break;
+                case ContentTypesEnum.Cinema:
+                    contentName = "Movie";
+                break;
+                case ContentTypesEnum.Frases:
+                    contentName = "Phrase";
+                break;
+                case ContentTypesEnum.Musical:
+                    contentName = "Music";
+                break;
+            }
+
+            await DataBase.OpenConnectionIfClosed();
+
+            MySqlCommand myCommand = new MySqlCommand();
+            myCommand.Connection = DataBase.connection;
+            myCommand.CommandText =
+                $"Delete From {contentName}_x_Category " +
+                    $"Where categoryId = {categoryId};";
+
+            await myCommand.ExecuteReaderAsync();
+
+            await DataBase.CloseConnection();
+        }
+
         public async Task<CategoryDTO?> GetCategoryById(int categoryId)
         {
             await DataBase.OpenConnectionIfClosed();
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id, name, iconBase64, contentTypeId " +
+            myCommand.CommandText = @"Select id, name, iconBase64, contentTypeId " +
                 "From Categories " +
                 $"Where id = {categoryId};";
 
@@ -87,7 +148,7 @@ namespace my_life_api.Database.Managers
 
             MySqlCommand myCommand = new MySqlCommand();
             myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id, name, iconBase64, contentTypeId " +
+            myCommand.CommandText = @"Select id, name, iconBase64, contentTypeId " +
                 "From Categories " +
                 $"Where contentTypeId = {contentTypeId};";
 
