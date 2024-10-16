@@ -45,7 +45,7 @@ namespace my_life_api.Validators
             if (isAuthorAssignedToWork) {
                 throw new CustomException(
                     400, 
-                    "Esse autor esta atualmente designado a uma ou mais obras, exclua elas ou troque suas autorias para poder o remover."
+                    "Esse autor esta atualmente designado a uma ou mais obras, exclua elas primeiro para poder o remover."
                 );
             }
 
