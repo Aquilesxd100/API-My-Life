@@ -1,6 +1,7 @@
 ﻿using System.Dynamic;
 using System.Reflection;
 using System.Collections.Immutable;
+using System.Collections;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -42,7 +43,9 @@ namespace my_life_api.Resources
         String = 2,
         Int = 3,
         Float = 4,
-        File = 5
+        File = 5,
+        IntEnumerable = 6,
+        StringEnumerable = 7
     }
 
     static public class MatchedFormDataFieldTypesArray
@@ -63,7 +66,9 @@ namespace my_life_api.Resources
             new MatchedFormDataFieldType(FormDataFieldType.Bool, typeof(bool)),
             new MatchedFormDataFieldType(FormDataFieldType.Int, typeof(int)),
             new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float)),
-            new MatchedFormDataFieldType(FormDataFieldType.File, typeof(IFormFile))
+            new MatchedFormDataFieldType(FormDataFieldType.File, typeof(IFormFile)),
+            new MatchedFormDataFieldType(FormDataFieldType.IntEnumerable, typeof(IEnumerable<int>)),
+            new MatchedFormDataFieldType(FormDataFieldType.StringEnumerable, typeof(IEnumerable<string>))
         );
 
         public static ImmutableArray<MatchedFormDataFieldType> Get()
@@ -88,7 +93,7 @@ namespace my_life_api.Resources
         /// <summary>
         ///     Tenta buscar o valor de um Param da requisição
         ///     retornando o valor do primeiro que encontrar,
-        ///     cria uma exceção caso mais de cinco parâmetros estejam presentes
+        ///     cria uma exceção caso mais de trinta e cinco parâmetros estejam presentes
         /// </summary>
         ///     <param name="paramName">
         ///         Nome do parâmetro buscado
@@ -106,7 +111,7 @@ namespace my_life_api.Resources
             int paramsVerified = 0;
             var param = reqParams.FirstOrDefault((p) =>
             {
-                if (paramsVerified > 5) {
+                if (paramsVerified > 35) {
                     throw new CustomException(400, "Os params enviados são inválidos.");
                 }
                 paramsVerified++;
@@ -214,62 +219,90 @@ namespace my_life_api.Resources
                 {
                     Type expectedType = property.PropertyType;
 
-                    try {
-                        // Nome da propriedade esperada
-                        string propertyName = property.Name;
+                    // Nome da propriedade esperada
+                    string propertyName = property.Name;
 
-                        // Obtém o valor da propriedade esperada da requisição
-                        StringValues reqPropertyValue = formData[propertyName];
+                    // Obtém o valor da propriedade esperada da requisição
+                    StringValues reqPropertyValue = formData[propertyName];
 
-                        FormDataFieldType? expectedTypeEnum = (MatchedFormDataFieldTypesArray.Get()
-                            .FirstOrDefault(ft =>
-                                ft.type == expectedType
-                            )
-                        )?.fieldTypeEnum;
+                    FormDataFieldType? expectedTypeEnum = (MatchedFormDataFieldTypesArray.Get()
+                        .FirstOrDefault(ft =>
+                            ft.type == expectedType
+                        )
+                    )?.fieldTypeEnum;
 
-                        // Função conversora do valor recebido para o esperado
-                        // se for um valor opcional e vazio roda a função abaixo, retornando null
-                        Func<object> reqValueConverter = () => null;
+                    // Função conversora do valor recebido para o esperado
+                    // se for um valor opcional e vazio roda a função abaixo, retornando null
+                    Func<object> reqValueConverter = () => null;
 
-                        // Se for esperado arquivo
-                        // ou valor do tipo String não aplica regra de obrigatoriedade
-                        bool isFileExpected = expectedTypeEnum == FormDataFieldType.File;
-                        bool isTextExpected = expectedTypeEnum == FormDataFieldType.String;
+                    // Se for esperado arquivo, valor tipo string ou Enumerable
+                    // não aplica regra de obrigatóriedade
+                    bool isFileExpected = expectedTypeEnum == FormDataFieldType.File;
+                    bool isTextExpected = expectedTypeEnum == FormDataFieldType.String;
+                    bool isEnumerableExpected = typeof(IEnumerable).IsAssignableFrom(expectedType) 
+                        && !isTextExpected;
 
-                        // Só tenta converter o valor caso ele tenha sido informado
-                        if (!string.IsNullOrEmpty(reqPropertyValue) || isFileExpected || isTextExpected) {
-                            switch (expectedTypeEnum) {
-                                case FormDataFieldType.String:
-                                    reqValueConverter = () => reqPropertyValue.ToString();
-                                break;
-                                case FormDataFieldType.Int:
-                                    reqValueConverter = () => Int32.Parse(reqPropertyValue);
-                                break;
-                                case FormDataFieldType.Float:
-                                    reqValueConverter = () => float.Parse(reqPropertyValue);
-                                break;
-                                case FormDataFieldType.Bool:
-                                    reqValueConverter = () => bool.Parse(reqPropertyValue);
-                                break;
-                                case FormDataFieldType.File:
-                                    Console.WriteLine(formData.Files[propertyName].FileName);
-                                    reqValueConverter = () => formData.Files[propertyName];
-                                break;
-                            }
-                        } else {
-                            // Verifica se a propriedade esperada é opcional/nullable
-                            // ou seja, foi typada com "?" Ex: int?
-                            bool isPropertyRequired = !expectedType.IsGenericType || expectedType.GetGenericTypeDefinition() != typeof(Nullable<>);
+                    // Só tenta converter o valor caso ele tenha sido informado
+                    if (
+                        !string.IsNullOrEmpty(reqPropertyValue) 
+                        || isFileExpected 
+                        || isTextExpected
+                        || isEnumerableExpected
+                    ) {
+                        switch (expectedTypeEnum) {
+                            case FormDataFieldType.String:
+                                reqValueConverter = () => reqPropertyValue.ToString();
+                            break;
+                            case FormDataFieldType.Int:
+                                reqValueConverter = () => Int32.Parse(reqPropertyValue);
+                            break;
+                            case FormDataFieldType.Float:
+                                reqValueConverter = () => float.Parse(reqPropertyValue);
+                            break;
+                            case FormDataFieldType.Bool:
+                                reqValueConverter = () => bool.Parse(reqPropertyValue);
+                            break;
+                            case FormDataFieldType.IntEnumerable:
+                                reqValueConverter = () => {
+                                    string[] rawArray =  reqPropertyValue.ToArray();
 
-                            if (isPropertyRequired) {
-                                invalidFields.Add(new InvalidFieldError(
-                                    property.Name,
-                                    "Esse campo é obrigatório e não foi informado."
-                                ));
-                                continue;
-                            }
+                                    // Valida por aqui pois o método de conversão direto não cai 
+                                    // no catch local (??)
+                                    rawArray.FirstOrDefault(i => {
+                                        bool result = !int.TryParse(i, out _);
+                                        if (result) throw new Exception();
+
+                                        return result;
+                                    });
+
+                                    IEnumerable<int> convertedValues = rawArray
+                                        .Select(i => Int32.Parse(i));                                 
+
+                                    return convertedValues;
+                                };
+                            break;
+                            case FormDataFieldType.StringEnumerable:
+                                reqValueConverter = () => reqPropertyValue.ToArray();
+                            break;
+                            case FormDataFieldType.File:
+                                reqValueConverter = () => formData.Files[propertyName];
+                            break;
                         }
+                    } else {
+                        // Verifica se a propriedade esperada é opcional/nullable
+                        // ou seja, foi typada com "?" Ex: int?
+                        bool isPropertyRequired = !expectedType.IsGenericType || expectedType.GetGenericTypeDefinition() != typeof(Nullable<>);
 
+                        if (isPropertyRequired) {
+                            invalidFields.Add(new InvalidFieldError(
+                                property.Name,
+                                "Esse campo é obrigatório e não foi informado."
+                            ));
+                            continue;
+                        }
+                    }
+
+                    try {
                         object convertedValue = reqValueConverter();
 
                         var propertyToRegister = new KeyValuePair<string, object>(
