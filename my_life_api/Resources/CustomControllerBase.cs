@@ -10,8 +10,9 @@ namespace my_life_api.Resources
             IFormCollection formData = HttpContext.Request.Form;
             string originalValue = formData[fieldName];
 
-            if (string.IsNullOrEmpty(originalValue)) return null;
+            if (originalValue == null) return null;
 
+            // No caso de array, caso informado e o valor é string vazia, retorna array vazio
             return receivedValue;
         }
     }
