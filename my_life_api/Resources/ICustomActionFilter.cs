@@ -66,6 +66,7 @@ namespace my_life_api.Resources
             new MatchedFormDataFieldType(FormDataFieldType.Bool, typeof(bool)),
             new MatchedFormDataFieldType(FormDataFieldType.Int, typeof(int)),
             new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float)),
+            new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float?)),
             new MatchedFormDataFieldType(FormDataFieldType.File, typeof(IFormFile)),
             new MatchedFormDataFieldType(FormDataFieldType.IntEnumerable, typeof(IEnumerable<int>)),
             new MatchedFormDataFieldType(FormDataFieldType.StringEnumerable, typeof(IEnumerable<string>))
@@ -264,6 +265,9 @@ namespace my_life_api.Resources
                             break;
                             case FormDataFieldType.IntEnumerable:
                                 reqValueConverter = () => {
+                                    // Se informado o campo, mas vazio, retorna vazio
+                                    if (reqPropertyValue == "") return Array.Empty<int>();
+
                                     string[] rawArray =  reqPropertyValue.ToArray();
 
                                     // Valida por aqui pois o método de conversão direto não cai 
@@ -282,7 +286,12 @@ namespace my_life_api.Resources
                                 };
                             break;
                             case FormDataFieldType.StringEnumerable:
-                                reqValueConverter = () => reqPropertyValue.ToArray();
+                                reqValueConverter = () => {
+                                    // Se informado o campo, mas vazio, retorna vazio
+                                    if (reqPropertyValue == "") return Array.Empty<string>();
+
+                                    return reqPropertyValue.ToArray(); 
+                                };
                             break;
                             case FormDataFieldType.File:
                                 reqValueConverter = () => formData.Files[propertyName];
