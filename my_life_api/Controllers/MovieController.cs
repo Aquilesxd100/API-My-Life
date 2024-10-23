@@ -90,12 +90,12 @@ namespace my_life_api.Controllers
         [ServiceFilter(typeof(UpdateMovieValidationFilter))]
         public async Task<IActionResult> Put(
             [FromForm] int id,
-            [FromForm] string nome,
-            [FromForm] IFormFile imagem,
-            [FromForm] float nota,
-            [FromForm] bool dublado,
-            [FromForm] bool fragmentoAlma,
-            [FromForm] IEnumerable<int> idsCategorias
+            [FromForm] string? nome,
+            [FromForm] IFormFile? imagem,
+            [FromForm] float? nota,
+            [FromForm] bool? dublado,
+            [FromForm] bool? fragmentoAlma,
+            [FromForm] IEnumerable<int>? idsCategorias
         ) {
             idsCategorias = GetNullIfValueNotInformed(idsCategorias, "idsCategorias");
 
@@ -127,13 +127,17 @@ namespace my_life_api.Controllers
         public async Task<IActionResult> Delete(
             [FromQuery] string idFilme
         ) {
-            MovieService service = new MovieService();
+            ContentService service = new ContentService();
 
             MovieDTO dbMovie = JsonConvert.DeserializeObject<MovieDTO>(
                 HttpContext.Request.Headers["requestedItem"]
             );
 
-            await service.DeleteMovieById(dbMovie);
+            await service.DeleteContentById(        
+                ContentTypesEnum.Cinema,
+                Int32.Parse(idFilme),
+                dbMovie.urlImagem
+            );
 
             return Ok(ApiResponse.CreateBody(200, "O filme foi excluído com sucesso!"));
         }
