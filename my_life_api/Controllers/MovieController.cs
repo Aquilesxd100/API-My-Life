@@ -12,7 +12,7 @@ using my_life_api.Validators.Author;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class MovieController : CustomControllerBase
+    public class MovieController : ControllerBase
     {
 
         private readonly ILogger<MovieController> _logger;
@@ -95,10 +95,10 @@ namespace my_life_api.Controllers
             [FromForm] float? nota,
             [FromForm] bool? dublado,
             [FromForm] bool? fragmentoAlma,
+            // Espera sempre valor, caso nao enviado
+            // considera que o conteudo nao deve ter categorias
             [FromForm] IEnumerable<int>? idsCategorias
         ) {
-            idsCategorias = GetNullIfValueNotInformed(idsCategorias, "idsCategorias");
-
             MovieService service = new MovieService();
 
             MovieUpdateRequestDTO movieReq = new MovieUpdateRequestDTO

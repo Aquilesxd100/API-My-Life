@@ -12,7 +12,7 @@ using my_life_api.Models.Requests.Author;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class AuthorController : CustomControllerBase
+    public class AuthorController : ControllerBase
     {
 
         private readonly ILogger<AuthorController> _logger;

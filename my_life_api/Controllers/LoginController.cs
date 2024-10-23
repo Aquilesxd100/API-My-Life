@@ -8,7 +8,7 @@ namespace my_life_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LoginController : CustomControllerBase
+    public class LoginController : ControllerBase
     {
         private readonly ILogger<LoginController> _logger;
 

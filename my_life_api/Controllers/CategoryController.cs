@@ -12,7 +12,7 @@ using my_life_api.Models.Requests.Category;
 namespace my_life_api.Controllers
 {
     [ApiController]
-    public class CategoryController : CustomControllerBase
+    public class CategoryController : ControllerBase
     {
 
         private readonly ILogger<CategoryController> _logger;
