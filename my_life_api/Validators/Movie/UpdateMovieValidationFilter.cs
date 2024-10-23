@@ -46,7 +46,7 @@ namespace my_life_api.Validators.Author
                 }
             }
 
-            if (movie.nota != null) {
+            if (movie.nota != null) {           
                 if (Validator.IsRatingInvalid((float)movie.nota)) {
                     throw new CustomException(400, "A nota informada é inválida, o valor deve ser entre 0 e 10.");
                 }

@@ -43,7 +43,13 @@ namespace my_life_api.Services
             }
 
             if (movieReq.idsCategorias.Count() > 0) {
-                await movieDbManager.CreateMovieCategoryRelations((int)movie.id, movieReq.idsCategorias);
+                ContentDBManager contentDbManager = new ContentDBManager();
+
+                await contentDbManager.CreateContentCategoryRelations(
+                    ContentTypesEnum.Cinema,
+                    (int)movie.id, 
+                    movieReq.idsCategorias
+                );
             }
         }
 
@@ -79,28 +85,12 @@ namespace my_life_api.Services
             await movieDbManager.UpdateMovie(movie);
 
             if (movieReq.idsCategorias != null) {
-                await movieDbManager.DeleteMovieCategoryRelations(movieReq.id);
+                ContentDBManager contentDbManager = new ContentDBManager();
 
-                if (movieReq.idsCategorias.Count() > 0) {
-                    await movieDbManager.CreateMovieCategoryRelations(
-                        movieReq.id,
-                        movieReq.idsCategorias
-                    );
-                }
-            }
-        }
-
-        public async Task DeleteMovieById(MovieDTO movie)
-        {
-            MovieDBManager movieDbManager = new MovieDBManager();
-
-            await movieDbManager.DeleteMovieCategoryRelations((int)movie.id);
-            await movieDbManager.DeleteMovieById((int)movie.id);
-
-            if (!string.IsNullOrEmpty(movie.urlImagem)) {
-                await FtpManager.DeleteFile(
-                    FtpManager.GetImageNameFromUrl(movie.urlImagem),
-                    FtpManager.moviePicturesFolder
+                await contentDbManager.UpdateContentCategoryRelations(
+                    ContentTypesEnum.Cinema,
+                    movieReq.id,
+                    movieReq.idsCategorias
                 );
             }
         }

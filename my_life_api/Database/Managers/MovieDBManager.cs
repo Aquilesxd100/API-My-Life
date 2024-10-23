@@ -70,21 +70,6 @@ namespace my_life_api.Database.Managers
             await DataBase.CloseConnection();
         }
 
-        public async Task DeleteMovieById(int movieId)
-        {
-            await DataBase.OpenConnectionIfClosed();
-
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                "Delete From Movies " +
-                    $"Where id = {movieId}";
-
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
-        }
-
         public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters)
         {
             await DataBase.OpenConnectionIfClosed();
@@ -191,48 +176,6 @@ namespace my_life_api.Database.Managers
                     "Set " +
                         $"imageUrl = {newImageUrl} " +
                     $"Where id = {movieId};";
-
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
-        }
-
-        public async Task CreateMovieCategoryRelations(int movieId, IEnumerable<int> categoriesIdsToAdd)
-        {
-            string valuesToAddQueryPart = "";
-            foreach (int categoryId in categoriesIdsToAdd)
-            {
-                if (valuesToAddQueryPart.Length > 0)
-                    valuesToAddQueryPart += ", ";
-
-                valuesToAddQueryPart += $"({movieId}, {categoryId})";
-            }
-            valuesToAddQueryPart += ";";
-
-            await DataBase.OpenConnectionIfClosed();
-
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                "Insert Into Movie_x_Category" +
-                    "(movieId, categoryId)" +
-                    "Values" +
-                        valuesToAddQueryPart;
-
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
-        }
-
-        public async Task DeleteMovieCategoryRelations(int movieId)
-        {
-            await DataBase.OpenConnectionIfClosed();
-
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                "Delete From Movie_x_Category " +
-                    $"Where movieId = {movieId};";
 
             await myCommand.ExecuteReaderAsync();
 
