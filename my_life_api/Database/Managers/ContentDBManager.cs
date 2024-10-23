@@ -9,8 +9,7 @@ namespace my_life_api.Database.Managers
         public async Task DeleteContent(
             int contentId,
             ContentTypesEnum contentType
-        )
-        {
+        ) {
             string tableName = GetTableNameByContentType(contentType);
 
             await DataBase.OpenConnectionIfClosed();
