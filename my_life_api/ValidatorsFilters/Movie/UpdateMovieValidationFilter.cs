@@ -18,39 +18,11 @@ namespace my_life_api.Validators.Author
             var movieObj = await GetFormDataContent<MovieUpdateRequestDTO>(context);
 
             MovieUpdateRequestDTO movie = new MovieUpdateRequestDTO().BuildFromObj(movieObj);
+            ContentValidator validator = new ContentValidator();
 
-            if (!string.IsNullOrEmpty(movie.nome)) {
-                if (movie.nome.Trim().Length == 0) {
-                    throw new CustomException(400, "O nome do filme não pode ser vazio.");
-                }
-
-                if (movie.nome.Length > 50) {
-                    throw new CustomException(400, "O nome do filme deve ter no máximo 50 caracteres.");
-                }
-
-                if (Validator.HasInvalidCharacters(movie.nome)) {
-                    throw new CustomException(400, "O nome do filme contém caracteres inválidos.");
-                }
-            }
-
-            if (movie.imagem != null) {
-                if (Validator.IsInvalidImageFormat(movie.imagem)) {
-                    throw new CustomException(
-                        400,
-                        "A imagem enviada está em formato incorreto, só são permitidas imagens png, jpg e jpeg."
-                    );
-                }
-
-                if (Validator.IsInvalidImageSize(movie.imagem)) {
-                    throw new CustomException(400, "A imagem enviada excede o tamanho máximo de 12mb.");
-                }
-            }
-
-            if (movie.nota != null) {           
-                if (Validator.IsRatingInvalid((float)movie.nota)) {
-                    throw new CustomException(400, "A nota informada é inválida, o valor deve ser entre 0 e 10.");
-                }
-            }
+            validator.ValidateName(movie.nome);
+            validator.ValidateOptionalImgFile(movie.imagem);
+            validator.ValidateRating(movie.nota);
 
             dynamic? movieDbData = null;
             if (movie.id > 0) {
