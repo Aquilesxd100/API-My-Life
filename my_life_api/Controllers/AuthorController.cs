@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using my_life_api.Validators;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Models;
-using my_life_api.Models.Requests;
-using my_life_api.Validators.Author;
-using my_life_api.Validators.Security;
+using my_life_api.ValidatorsFilters;
+using my_life_api.ValidatorsFilters.Author;
+using my_life_api.ValidatorsFilters.Security;
 using my_life_api.Models.Requests.Author;
 
 namespace my_life_api.Controllers

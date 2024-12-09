@@ -6,7 +6,7 @@ using my_life_api.Resources;
 using my_life_api.Shared;
 using my_life_api.Models.Requests.Author;
 
-namespace my_life_api.Validators.Author
+namespace my_life_api.ValidatorsFilters.Author
 {
     public class UpdateAuthorValidationFilter : ICustomActionFilter
     {

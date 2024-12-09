@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using my_life_api.Services;
 
-namespace my_life_api.Validators.Security
+namespace my_life_api.ValidatorsFilters.Security
 {
     public class TokenValidationFilter : IActionFilter
     {

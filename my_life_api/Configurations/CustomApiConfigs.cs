@@ -1,10 +1,12 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
 using my_life_api.Resources;
-using my_life_api.Validators.Author;
-using my_life_api.Validators.Security;
-using my_life_api.Validators;
-using my_life_api.Validators.Record;
+using my_life_api.ValidatorsFilters;
+using my_life_api.ValidatorsFilters.Author;
+using my_life_api.ValidatorsFilters.Security;
+using my_life_api.ValidatorsFilters.Category;
+using my_life_api.ValidatorsFilters.Movie;
+using my_life_api.ValidatorsFilters.Record;
 
 namespace my_life_api.Configurations
 {

@@ -1,6 +1,6 @@
-﻿using my_life_api.Models;
+﻿using System.Net;
+using my_life_api.Models;
 using my_life_api.Resources;
-using System.Net;
 
 namespace my_life_api.Middlewares
 {

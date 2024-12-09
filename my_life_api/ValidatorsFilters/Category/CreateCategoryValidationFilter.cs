@@ -4,7 +4,7 @@ using my_life_api.Models.Requests.Category;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.Validators.Author
+namespace my_life_api.ValidatorsFilters.Category
 {
     public class CreateCategoryValidationFilter : ICustomActionFilter
     {

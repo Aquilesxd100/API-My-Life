@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using my_life_api.Models;
-using my_life_api.Models.Requests.Author;
+using my_life_api.Models.Requests.Movie;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Shared;
 
-namespace my_life_api.Validators.Author
+namespace my_life_api.ValidatorsFilters.Movie
 {
     public class CreateMovieValidationFilter : ICustomActionFilter
     {

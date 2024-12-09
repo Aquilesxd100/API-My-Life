@@ -3,7 +3,7 @@ using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.Validators
+namespace my_life_api.ValidatorsFilters
 {
     public class ContentTypeParamValidationFilter : ICustomActionFilter
     {

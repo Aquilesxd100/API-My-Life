@@ -3,7 +3,7 @@ using my_life_api.Models;
 using my_life_api.Models.Requests;
 using my_life_api.Resources;
 
-namespace my_life_api.Validators.Security
+namespace my_life_api.ValidatorsFilters.Security
 {
     public class LoginValidationFilter : ICustomActionFilter
     {

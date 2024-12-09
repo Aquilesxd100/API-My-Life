@@ -6,7 +6,7 @@ using my_life_api.Resources;
 using my_life_api.Shared;
 using my_life_api.Models.Requests.Record;
 
-namespace my_life_api.Validators.Record
+namespace my_life_api.ValidatorsFilters.Record
 {
     public class UpdateRecordValidationFilter : ICustomActionFilter
     {

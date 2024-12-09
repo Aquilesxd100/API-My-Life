@@ -1,4 +1,4 @@
-﻿namespace my_life_api.Models.Requests.Author
+﻿namespace my_life_api.Models.Requests.Movie
 {
     public class MovieCreateRequestDTO
     {

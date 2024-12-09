@@ -2,10 +2,9 @@
 using Newtonsoft.Json;
 using my_life_api.Database.Managers;
 using my_life_api.Models;
-using my_life_api.Models.Requests;
 using my_life_api.Resources;
 
-namespace my_life_api.Validators
+namespace my_life_api.ValidatorsFilters.Category
 {
     public class DeleteCategoryValidationFilter : ICustomActionFilter
     {
