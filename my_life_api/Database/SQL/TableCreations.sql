@@ -2,19 +2,20 @@ Use patholo1_my_life;
 
 -- Postagens e seus recursos
 
-Create Table Registries (
+Create Table Records (
   id Integer Auto_Increment Primary Key,
-  createdAt Timestamp,
+  createdAt DateTime Default Current_Timestamp,
+  name Varchar(50) Not Null,
   year Year Not Null,
   content Text Not Null,
   mainImageUrl Varchar(255)
 );
 
 Create Table SecondaryImages (
-  id Integer Auto_Increment Primary Key,
+  id Varchar(60) Primary Key,
   imageUrl Varchar(255) Not Null,
-  registryId Integer Not Null,
-  Foreign Key (registryId) References Registries(id)
+  recordId Integer Not Null,
+  Foreign Key (recordId) References Records(id)
 );
 
 -- Registros de conteudos vistos e seus recursos
