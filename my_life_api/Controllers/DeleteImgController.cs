@@ -6,38 +6,34 @@ using my_life_api.Models;
 using my_life_api.ValidatorsFilters;
 using my_life_api.ValidatorsFilters.Security;
 
-namespace my_life_api.Controllers
-{
-    [ApiController]
-    public class DeleteImgController : ControllerBase
-    {
+namespace my_life_api.Controllers;
 
-        private readonly ILogger<DeleteImgController> _logger;
+[ApiController]
+public class DeleteImgController : ControllerBase {
 
-        public DeleteImgController(ILogger<DeleteImgController> logger)
-        {
-            _logger = logger;
-        }
+    private readonly ILogger<DeleteImgController> _logger;
 
-        [HttpDelete("deletarimg/conteudo", Name = "deletarimg/conteudo")]
-        [ServiceFilter(typeof(TokenValidationFilter))]
-        [ServiceFilter(typeof(DeleteContentImgValidationFilter))]
-        public async Task<IActionResult> DeleteContentImg(
-            [FromQuery] string idTipoConteudo,
-            [FromQuery] string idConteudo
-        )
-        {
-            ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
-            int resourceId = Int32.Parse(idConteudo);
-            dynamic requestedItem = JsonConvert.DeserializeObject(HttpContext.Request.Headers["requestedItem"]);
+    public DeleteImgController(ILogger<DeleteImgController> logger) {
+        _logger = logger;
+    }
 
-            DeleteImgService service = new DeleteImgService();
-            await service.DeleteContentImg(contentTypeId, requestedItem);
+    [HttpDelete("deletarimg/conteudo", Name = "deletarimg/conteudo")]
+    [ServiceFilter(typeof(TokenValidationFilter))]
+    [ServiceFilter(typeof(DeleteContentImgValidationFilter))]
+    public async Task<IActionResult> DeleteContentImg(
+        [FromQuery] string idTipoConteudo,
+        [FromQuery] string idConteudo
+    ) {
+        ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
+        int resourceId = Int32.Parse(idConteudo);
+        dynamic requestedItem = JsonConvert.DeserializeObject(HttpContext.Request.Headers["requestedItem"]);
 
-            return Ok(ApiResponse.CreateBody(
-                200,
-                "A imagem foi removida com sucesso!"
-            ));
-        }
+        DeleteImgService service = new DeleteImgService();
+        await service.DeleteContentImg(contentTypeId, requestedItem);
+
+        return Ok(ApiResponse.CreateBody(
+            200,
+            "A imagem foi removida com sucesso!"
+        ));
     }
 }

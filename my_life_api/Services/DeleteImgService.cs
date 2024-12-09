@@ -2,43 +2,39 @@
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Services
-{
-    public class DeleteImgService
-    {
-        public async Task DeleteContentImg(ContentTypesEnum contentType, dynamic requestedItem)
-        {
-            int contentId = (int)requestedItem.id;
-            string contentImageUrl = (string)requestedItem.urlImagem;
+namespace my_life_api.Services;
 
-            switch (contentType)
-            {
-                case ContentTypesEnum.Animes:
+public class DeleteImgService {
+    public async Task DeleteContentImg(ContentTypesEnum contentType, dynamic requestedItem) {
+        int contentId = (int)requestedItem.id;
+        string contentImageUrl = (string)requestedItem.urlImagem;
 
-                break;
-                case ContentTypesEnum.Mangas:
+        switch (contentType) {
+            case ContentTypesEnum.Animes:
 
-                break;
-                case ContentTypesEnum.Seriado:
+            break;
+            case ContentTypesEnum.Mangas:
 
-                break;
-                case ContentTypesEnum.Livros:
+            break;
+            case ContentTypesEnum.Seriado:
 
-                break;
-                case ContentTypesEnum.Jogos:
+            break;
+            case ContentTypesEnum.Livros:
 
-                break;
-                case ContentTypesEnum.Cinema:
-                    MovieDBManager movieDbManager = new MovieDBManager();
-                    await movieDbManager.UpdateMovieImageUrlById(contentId, null);
+            break;
+            case ContentTypesEnum.Jogos:
 
-                    string reqContentExt = contentImageUrl.Split(".")[^1];
-                    await FtpManager.DeleteFile(
-                        $"movie-{contentId}.{reqContentExt}", 
-                        FtpManager.moviePicturesFolder
-                    );
-                break;
-            }
+            break;
+            case ContentTypesEnum.Cinema:
+                MovieDBManager movieDbManager = new MovieDBManager();
+                await movieDbManager.UpdateMovieImageUrlById(contentId, null);
+
+                string reqContentExt = contentImageUrl.Split(".")[^1];
+                await FtpManager.DeleteFile(
+                    $"movie-{contentId}.{reqContentExt}", 
+                    FtpManager.moviePicturesFolder
+                );
+            break;
         }
     }
 }

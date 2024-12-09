@@ -5,8 +5,7 @@ public class RecordAddSecondaryImgDTO {
 
     public IFormFile imagemSecundaria { get; set; }
 
-    public RecordAddSecondaryImgDTO BuildFromObj(dynamic dynamicObject)
-    {
+    public RecordAddSecondaryImgDTO BuildFromObj(dynamic dynamicObject) {
         idRegistro = dynamicObject.idRegistro;
         imagemSecundaria = dynamicObject.imagemSecundaria;
 

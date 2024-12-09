@@ -1,21 +1,18 @@
-﻿namespace my_life_api.Models.Requests.Category
-{
-    public class CategoryCreateRequestDTO
-    {
-        public string nome { get; set; }
+﻿namespace my_life_api.Models.Requests.Category;
 
-        public string? iconeBase64 { get; set; }
+public class CategoryCreateRequestDTO {
+    public string nome { get; set; }
 
-        public int idTipoConteudo { get; set; }
+    public string? iconeBase64 { get; set; }
 
-        public CategoryCreateRequestDTO BuildFromObj(dynamic dynamicObject)
-        {
-            nome = dynamicObject.nome;
-            idTipoConteudo = dynamicObject.idTipoConteudo;
+    public int idTipoConteudo { get; set; }
 
-            iconeBase64 = dynamicObject.iconeBase64;
+    public CategoryCreateRequestDTO BuildFromObj(dynamic dynamicObject) {
+        nome = dynamicObject.nome;
+        idTipoConteudo = dynamicObject.idTipoConteudo;
 
-            return this;
-        }
+        iconeBase64 = dynamicObject.iconeBase64;
+
+        return this;
     }
 }

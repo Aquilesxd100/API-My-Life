@@ -6,41 +6,48 @@ using my_life_api.Resources;
 using my_life_api.Models.Requests.Record;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidatorsFilters.Record
-{
-    public class AddRecordSecondaryImgValidationFilter : ICustomActionFilter
-    {
-        public override async Task OnActionExecutionAsync(
-            ActionExecutingContext context,
-            ActionExecutionDelegate next
-        ) {
-            var requestObj = await GetFormDataContent<RecordAddSecondaryImgDTO>(context);
+namespace my_life_api.ValidatorsFilters.Record;
 
-            RecordAddSecondaryImgDTO secondaryImgRequest = new RecordAddSecondaryImgDTO().BuildFromObj(requestObj);
+public class AddRecordSecondaryImgValidationFilter : ICustomActionFilter {
+    public override async Task OnActionExecutionAsync(
+        ActionExecutingContext context,
+        ActionExecutionDelegate next
+    ) {
+        var requestObj = await GetFormDataContent<RecordAddSecondaryImgDTO>(context);
 
-            var validator = new ContentValidator();
-            if (secondaryImgRequest.imagemSecundaria != null) { 
-                validator.ValidateOptionalImgFile(secondaryImgRequest.imagemSecundaria);            
-            } else {
-                throw new CustomException(400, "A 'imagemSecundaria' é obrigatória e não foi informada.");
-            }
+        RecordAddSecondaryImgDTO secondaryImgRequest = new RecordAddSecondaryImgDTO().BuildFromObj(requestObj);
 
-            RecordDTO? record = null;
-
-            RecordDBManager recordDbManager = new RecordDBManager();
-            record = await recordDbManager.GetRecordById(secondaryImgRequest.idRegistro);
-
-            if (record == null) {
-                throw new CustomException(404, "Nenhum registro com esse id foi encontrado.");
-            }
-
-            if (record.imagensSecundarias.Count() >= 8) {
-                throw new CustomException(400, "Esse registro já alcançou o limite de imagens secundárias.");
-            }
-
-            context.HttpContext.Request.Headers.Add("requestedItem", JsonConvert.SerializeObject(record));
-
-            await next();
+        var validator = new ContentValidator();
+        if (secondaryImgRequest.imagemSecundaria != null) { 
+            validator.ValidateOptionalImgFile(secondaryImgRequest.imagemSecundaria);            
+        } else {
+            throw new CustomException(
+                400, 
+                "A 'imagemSecundaria' é obrigatória e não foi informada."
+            );
         }
+
+        RecordDTO? record = null;
+
+        RecordDBManager recordDbManager = new RecordDBManager();
+        record = await recordDbManager.GetRecordById(secondaryImgRequest.idRegistro);
+
+        if (record == null) {
+            throw new CustomException(404, "Nenhum registro com esse id foi encontrado.");
+        }
+
+        if (record.imagensSecundarias.Count() >= 8) {
+            throw new CustomException(
+                400, 
+                "Esse registro já alcançou o limite de imagens secundárias."
+            );
+        }
+
+        context.HttpContext.Request.Headers.Add(
+            "requestedItem", 
+            JsonConvert.SerializeObject(record)
+        );
+
+        await next();
     }
 }

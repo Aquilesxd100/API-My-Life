@@ -14,7 +14,10 @@ namespace my_life_api.ValidatorsFilters
             string contentTypeId = GetParamValue("idTipoConteudo", context);
 
             if (string.IsNullOrEmpty(contentTypeId)) {
-                throw new CustomException(400, "O param 'idTipoConteudo' é obrigatório e não foi informado.");
+                throw new CustomException(
+                    400, 
+                    "O param 'idTipoConteudo' é obrigatório e não foi informado."
+                );
             }
 
             int convertedContentTypeId = 0;
@@ -24,7 +27,10 @@ namespace my_life_api.ValidatorsFilters
             } catch (Exception exception) { }
 
             if (Validator.IsContentTypeIdInvalid(convertedContentTypeId)) {
-                throw new CustomException(400, "O param 'idTipoConteudo' informado é inválido.");
+                throw new CustomException(
+                    400, 
+                    "O param 'idTipoConteudo' informado é inválido."
+                );
             }
 
             await next();

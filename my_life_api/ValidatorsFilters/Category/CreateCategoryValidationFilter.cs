@@ -4,49 +4,55 @@ using my_life_api.Models.Requests.Category;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidatorsFilters.Category
-{
-    public class CreateCategoryValidationFilter : ICustomActionFilter
-    {
-        public override async Task OnActionExecutionAsync(
-            ActionExecutingContext context,
-            ActionExecutionDelegate next)
-        {
-            var authorObj = await GetFormDataContent<CategoryCreateRequestDTO>(context);
+namespace my_life_api.ValidatorsFilters.Category;
 
-            CategoryCreateRequestDTO category = new CategoryCreateRequestDTO().BuildFromObj(authorObj);
+public class CreateCategoryValidationFilter : ICustomActionFilter {
+    public override async Task OnActionExecutionAsync(
+        ActionExecutingContext context,
+        ActionExecutionDelegate next
+    ) {
+        var authorObj = await GetFormDataContent<CategoryCreateRequestDTO>(context);
 
-            if (string.IsNullOrEmpty(category.nome) || category.nome.Trim().Length == 0) {
-                throw new CustomException(400, "O nome da categoria é obrigatório e não pode ficar vazio.");
-            }
+        CategoryCreateRequestDTO category = new CategoryCreateRequestDTO().BuildFromObj(
+            authorObj
+        );
 
-            if (category.nome.Length > 50) {
-                throw new CustomException(400, "O nome da categoria deve ter no máximo 50 caracteres.");
-            }
-
-            if (Validator.HasInvalidCharacters(category.nome)) {
-                throw new CustomException(400, "O nome da categoria contém caracteres inválidos.");
-            }
-
-            if (Validator.IsContentTypeIdInvalid(category.idTipoConteudo)) {
-                throw new CustomException(400, "O idTipoConteudo informado não é valido.");
-            }
-
-            if (!string.IsNullOrEmpty(category.iconeBase64)) {
-                if (category.iconeBase64.Length > 400000) {
-                    throw new CustomException(400, "O iconeBase64 é grande demais.");
-                }
-
-                if (category.iconeBase64.IndexOf("data:image/") != 0) {
-                    throw new CustomException(400, "O iconeBase64 informado não é valido.");
-                }
-
-                if (Validator.HasInvalidCharacters(category.iconeBase64)) {
-                    throw new CustomException(400, "O iconeBase64 tem caracteres inválidos.");
-                }
-            }
-
-            await next();
+        if (string.IsNullOrEmpty(category.nome) || category.nome.Trim().Length == 0) {
+            throw new CustomException(
+                400, 
+                "O nome da categoria é obrigatório e não pode ficar vazio."
+            );
         }
+
+        if (category.nome.Length > 50) {
+            throw new CustomException(
+                400, 
+                "O nome da categoria deve ter no máximo 50 caracteres."
+            );
+        }
+
+        if (Validator.HasInvalidCharacters(category.nome)) {
+            throw new CustomException(400, "O nome da categoria contém caracteres inválidos.");
+        }
+
+        if (Validator.IsContentTypeIdInvalid(category.idTipoConteudo)) {
+            throw new CustomException(400, "O idTipoConteudo informado não é valido.");
+        }
+
+        if (!string.IsNullOrEmpty(category.iconeBase64)) {
+            if (category.iconeBase64.Length > 400000) {
+                throw new CustomException(400, "O iconeBase64 é grande demais.");
+            }
+
+            if (category.iconeBase64.IndexOf("data:image/") != 0) {
+                throw new CustomException(400, "O iconeBase64 informado não é valido.");
+            }
+
+            if (Validator.HasInvalidCharacters(category.iconeBase64)) {
+                throw new CustomException(400, "O iconeBase64 tem caracteres inválidos.");
+            }
+        }
+
+        await next();
     }
 }

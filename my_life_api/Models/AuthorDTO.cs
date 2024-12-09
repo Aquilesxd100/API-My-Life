@@ -1,13 +1,11 @@
-﻿namespace my_life_api.Models
-{
-    public class AuthorDTO
-    {
-        public int? id { get; set; }
+﻿namespace my_life_api.Models;
 
-        public string nome { get; set; }
+public class AuthorDTO {
+    public int? id { get; set; }
 
-        public string urlImagem { get; set; }
+    public string nome { get; set; }
 
-        public ContentTypesEnum? idTipoConteudo { get; set; }
-    }
+    public string urlImagem { get; set; }
+
+    public ContentTypesEnum? idTipoConteudo { get; set; }
 }

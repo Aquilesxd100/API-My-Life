@@ -1,33 +1,30 @@
-﻿namespace my_life_api.Models.Requests.Movie
-{
-    public class MovieUpdateRequestDTO
-    {
-        public int id { get; set; }
+﻿namespace my_life_api.Models.Requests.Movie;
 
-        public string? nome { get; set; }
+public class MovieUpdateRequestDTO {
+    public int id { get; set; }
 
-        public IFormFile? imagem { get; set; }
+    public string? nome { get; set; }
 
-        public float? nota { get; set; }
+    public IFormFile? imagem { get; set; }
 
-        public bool? dublado { get; set; }
+    public float? nota { get; set; }
 
-        public bool? fragmentoAlma { get; set; }
+    public bool? dublado { get; set; }
 
-        public IEnumerable<int>? idsCategorias { get; set; }
+    public bool? fragmentoAlma { get; set; }
 
-        public MovieUpdateRequestDTO BuildFromObj(dynamic dynamicObject)
-        {
-            id = dynamicObject.id;
+    public IEnumerable<int>? idsCategorias { get; set; }
 
-            nome = dynamicObject.nome;
-            nota = dynamicObject.nota;
-            idsCategorias = dynamicObject.idsCategorias;
-            fragmentoAlma = dynamicObject.fragmentoAlma;
-            dublado = dynamicObject.dublado;
-            imagem = dynamicObject.imagem;
+    public MovieUpdateRequestDTO BuildFromObj(dynamic dynamicObject) {
+        id = dynamicObject.id;
 
-            return this;
-        }
+        nome = dynamicObject.nome;
+        nota = dynamicObject.nota;
+        idsCategorias = dynamicObject.idsCategorias;
+        fragmentoAlma = dynamicObject.fragmentoAlma;
+        dublado = dynamicObject.dublado;
+        imagem = dynamicObject.imagem;
+
+        return this;
     }
 }

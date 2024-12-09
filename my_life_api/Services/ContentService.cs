@@ -2,29 +2,27 @@
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Services
-{
-    public class ContentService
-    {
-        private ContentDBManager dbManager = new ContentDBManager();
+namespace my_life_api.Services;
 
-        public async Task DeleteContentById( 
-            ContentTypesEnum contentType,
-            int contentId,
-            string? urlImagem
-        ) {
-            await dbManager.DeleteContentCategoryRelations(contentType, contentId);
-            await dbManager.DeleteContent(contentId, contentType);
+public class ContentService {
+    private ContentDBManager dbManager = new ContentDBManager();
 
-            string imgFolder = 
-                dbManager.GetContentNameByContentType(contentType).ToLower()
-                + "_pictures";
+    public async Task DeleteContentById( 
+        ContentTypesEnum contentType,
+        int contentId,
+        string? urlImagem
+    ) {
+        await dbManager.DeleteContentCategoryRelations(contentType, contentId);
+        await dbManager.DeleteContent(contentId, contentType);
 
-            if (!string.IsNullOrEmpty(urlImagem)) {
-                string imgName = FtpManager.GetImageNameFromUrl(urlImagem);
+        string imgFolder = 
+            dbManager.GetContentNameByContentType(contentType).ToLower()
+            + "_pictures";
 
-                await FtpManager.DeleteFile(imgName, imgFolder);
-            }
+        if (!string.IsNullOrEmpty(urlImagem)) {
+            string imgName = FtpManager.GetImageNameFromUrl(urlImagem);
+
+            await FtpManager.DeleteFile(imgName, imgFolder);
         }
     }
 }

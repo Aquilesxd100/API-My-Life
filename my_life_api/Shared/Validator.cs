@@ -2,59 +2,57 @@
 using System.Text.RegularExpressions;
 using my_life_api.Models;
 
-namespace my_life_api.Shared
-{
-    public static class Validator
-    {
-        public static readonly ImmutableArray<int> validContentTypesIds = ImmutableArray.Create(
-            (int)ContentTypesEnum.Musical,
-            (int)ContentTypesEnum.Mangas,
-            (int)ContentTypesEnum.Animes,
-            (int)ContentTypesEnum.Seriado,
-            (int)ContentTypesEnum.Livros,
-            (int)ContentTypesEnum.Frases,
-            (int)ContentTypesEnum.Jogos,
-            (int)ContentTypesEnum.Cinema
-        );
+namespace my_life_api.Shared;
 
-        public static readonly ImmutableArray<string> validImgTypes = ImmutableArray.Create(
-            "image/jpeg", 
-            "image/png", 
-            "image/jpg" 
-        );
+public static class Validator {
+    public static readonly ImmutableArray<int> validContentTypesIds = ImmutableArray.Create(
+        (int)ContentTypesEnum.Musical,
+        (int)ContentTypesEnum.Mangas,
+        (int)ContentTypesEnum.Animes,
+        (int)ContentTypesEnum.Seriado,
+        (int)ContentTypesEnum.Livros,
+        (int)ContentTypesEnum.Frases,
+        (int)ContentTypesEnum.Jogos,
+        (int)ContentTypesEnum.Cinema
+    );
 
-        public static bool IsContentTypeIdInvalid(int? value) {
-            return !validContentTypesIds.Contains(value ?? 0);
-        }
+    public static readonly ImmutableArray<string> validImgTypes = ImmutableArray.Create(
+        "image/jpeg", 
+        "image/png", 
+        "image/jpg" 
+    );
 
-        public static bool IsInvalidImageFormat(IFormFile file) {
-            string mimeType = file.ContentType;
+    public static bool IsContentTypeIdInvalid(int? value) {
+        return !validContentTypesIds.Contains(value ?? 0);
+    }
 
-            if (string.IsNullOrEmpty(mimeType)) return true;
+    public static bool IsInvalidImageFormat(IFormFile file) {
+        string mimeType = file.ContentType;
 
-            if (!validImgTypes.Contains(mimeType)) return true;
+        if (string.IsNullOrEmpty(mimeType)) return true;
 
-            return false;
-        }
+        if (!validImgTypes.Contains(mimeType)) return true;
 
-        public static bool IsInvalidImageSize(IFormFile file) {
-            long imageSizeInMegabytes = file.Length / 1000000;
-            short maxImageSizeInMegabytes = 12;
+        return false;
+    }
 
-            if (imageSizeInMegabytes > maxImageSizeInMegabytes) return true;
+    public static bool IsInvalidImageSize(IFormFile file) {
+        long imageSizeInMegabytes = file.Length / 1000000;
+        short maxImageSizeInMegabytes = 12;
 
-            return false;
-        }
+        if (imageSizeInMegabytes > maxImageSizeInMegabytes) return true;
 
-        public static bool HasInvalidCharacters(string value) {
-            var regex = @"^[^<>""'{}$]*$";
-            Match match = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+        return false;
+    }
 
-            return !match.Success;
-        }
+    public static bool HasInvalidCharacters(string value) {
+        var regex = @"^[^<>""'{}$]*$";
+        Match match = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
-        public static bool IsRatingInvalid(float value) {
-            return value < 0 || value > 10;
-        }
+        return !match.Success;
+    }
+
+    public static bool IsRatingInvalid(float value) {
+        return value < 0 || value > 10;
     }
 }

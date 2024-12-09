@@ -5,41 +5,39 @@ using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidatorsFilters.Movie
-{
-    public class CreateMovieValidationFilter : ICustomActionFilter
-    {
-        public override async Task OnActionExecutionAsync(
-            ActionExecutingContext context,
-            ActionExecutionDelegate next)
-        {
-            var movieObj = await GetFormDataContent<MovieCreateRequestDTO>(context);
+namespace my_life_api.ValidatorsFilters.Movie;
 
-            MovieCreateRequestDTO movie = new MovieCreateRequestDTO().BuildFromObj(movieObj);
-            ContentValidator validator = new ContentValidator();
+public class CreateMovieValidationFilter : ICustomActionFilter {
+    public override async Task OnActionExecutionAsync(
+        ActionExecutingContext context,
+        ActionExecutionDelegate next
+    ) {
+        var movieObj = await GetFormDataContent<MovieCreateRequestDTO>(context);
 
-            validator.ValidateName(movie.nome, true);
-            validator.ValidateOptionalImgFile(movie.imagem);
-            validator.ValidateRating(movie.nota);
-            await validator.ValidateContentAuthor(movie.idAutor, ContentTypesEnum.Cinema);
+        MovieCreateRequestDTO movie = new MovieCreateRequestDTO().BuildFromObj(movieObj);
+        ContentValidator validator = new ContentValidator();
 
-            if (movie.idsCategorias.Count() > 0) {
-                CategoryService categoryService = new CategoryService();
-                IEnumerable<int> validCategoriesIds = (await categoryService.GetCategoriesByContentTypeId(
-                    ContentTypesEnum.Cinema)
-                ).Select(c => c.id);
+        validator.ValidateName(movie.nome, true);
+        validator.ValidateOptionalImgFile(movie.imagem);
+        validator.ValidateRating(movie.nota);
+        await validator.ValidateContentAuthor(movie.idAutor, ContentTypesEnum.Cinema);
 
-                foreach(int idCategory in movie.idsCategorias) {
-                    if (!validCategoriesIds.Contains(idCategory)) {
-                        throw new CustomException(
-                            404,
-                            "Um ou mais idsCategorias não existem."
-                        );
-                    }
+        if (movie.idsCategorias.Count() > 0) {
+            CategoryService categoryService = new CategoryService();
+            IEnumerable<int> validCategoriesIds = (
+                await categoryService.GetCategoriesByContentTypeId(ContentTypesEnum.Cinema)
+            ).Select(c => c.id);
+
+            foreach (int idCategory in movie.idsCategorias) {
+                if (!validCategoriesIds.Contains(idCategory)) {
+                    throw new CustomException(
+                        404,
+                        "Um ou mais idsCategorias não existem."
+                    );
                 }
             }
-
-            await next();
         }
+
+        await next();
     }
 }

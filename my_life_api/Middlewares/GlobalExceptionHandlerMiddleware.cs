@@ -2,47 +2,38 @@
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Middlewares
-{
-    public class GlobalExceptionHandlerMiddleware
-    {
-        private readonly RequestDelegate _next;
+namespace my_life_api.Middlewares;
 
-        public GlobalExceptionHandlerMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+public class GlobalExceptionHandlerMiddleware {
+    private readonly RequestDelegate _next;
 
-        public async Task InvokeAsync(HttpContext context)
-        {
-            try
-            {
-                await _next(context);
-            }
-            catch (CustomException exception)
-            {
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = exception.StatusCode;
+    public GlobalExceptionHandlerMiddleware(RequestDelegate next) {
+        _next = next;
+    }
 
-                await context.Response.WriteAsJsonAsync(
-                    ApiResponse.CreateBody(
-                        exception.StatusCode,
-                        exception.Message,
-                        exception.Content
-                    )
-                );
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
+    public async Task InvokeAsync(HttpContext context) {
+        try {
+            await _next(context);
+        } catch (CustomException exception) {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = exception.StatusCode;
 
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            await context.Response.WriteAsJsonAsync(
+                ApiResponse.CreateBody(
+                    exception.StatusCode,
+                    exception.Message,
+                    exception.Content
+                )
+            );
+        } catch (Exception exception) {
+            Console.WriteLine(exception);
 
-                await context.Response.WriteAsJsonAsync(
-                    ApiResponse.CreateBody(500, "Ocorreu um erro interno no servidor.")
-                );
-            }
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+
+            await context.Response.WriteAsJsonAsync(
+                ApiResponse.CreateBody(500, "Ocorreu um erro interno no servidor.")
+            );
         }
     }
 }

@@ -1,185 +1,173 @@
 ﻿using System.Data;
 using MySql.Data.MySqlClient;
-using my_life_api.Models.Requests;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Database.Managers
-{
-    public class MovieDBManager : BaseDBManager
-    {
-        public async Task<int> CreateMovie(MovieDTO movie)
-        {
-            await DataBase.OpenConnectionIfClosed();
+namespace my_life_api.Database.Managers;
 
-            string treatedUrlImage = movie.urlImagem != null
-                ? $"'{movie.urlImagem}'"
-                : "NULL";
+public class MovieDBManager : BaseDBManager {
+    public async Task<int> CreateMovie(MovieDTO movie) {
+        await DataBase.OpenConnectionIfClosed();
 
-            int dubbedInBytes = movie.dublado ? 1 : 0;
-            int soulFragmentInBytes = movie.fragmentoAlma ? 1 : 0;
-            string treatedRatingValue = GetTreatedRatingValue(movie.nota);
+        string treatedUrlImage = movie.urlImagem != null
+            ? $"'{movie.urlImagem}'"
+            : "NULL";
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
+        int dubbedInBytes = movie.dublado ? 1 : 0;
+        int soulFragmentInBytes = movie.fragmentoAlma ? 1 : 0;
+        string treatedRatingValue = GetTreatedRatingValue(movie.nota);
 
-            myCommand.CommandText =
-                "Insert Into Movies" +
-                    "(name, imageUrl, rating, dubbed, soulFragment, authorId)" +
-                    "Values" +
-                        $"('{movie.nome}', {treatedUrlImage}, {treatedRatingValue}, " +
-                        $"{dubbedInBytes}, {soulFragmentInBytes}, {movie.autor.id});"
-                + "Select Last_Insert_Id();";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
 
-            var result = await myCommand.ExecuteScalarAsync();
-            int movieId = int.Parse(result.ToString());
+        myCommand.CommandText =
+            "Insert Into Movies" +
+                "(name, imageUrl, rating, dubbed, soulFragment, authorId)" +
+                "Values" +
+                    $"('{movie.nome}', {treatedUrlImage}, {treatedRatingValue}, " +
+                    $"{dubbedInBytes}, {soulFragmentInBytes}, {movie.autor.id});"
+            + "Select Last_Insert_Id();";
 
-            await DataBase.CloseConnection();
+        var result = await myCommand.ExecuteScalarAsync();
+        int movieId = int.Parse(result.ToString());
 
-            return movieId;
-        }
+        await DataBase.CloseConnection();
 
-        public async Task UpdateMovie(MovieDTO movie)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        return movieId;
+    }
 
-            string treatedUrlImage = movie.urlImagem != null
-                ? $"'{movie.urlImagem}'"
-                : "NULL";
+    public async Task UpdateMovie(MovieDTO movie) {
+        await DataBase.OpenConnectionIfClosed();
 
-            int dubbedInBytes = movie.dublado ? 1 : 0;
-            int soulFragmentInBytes = movie.fragmentoAlma ? 1 : 0;
-            string treatedRatingValue = GetTreatedRatingValue(movie.nota);
+        string treatedUrlImage = movie.urlImagem != null
+            ? $"'{movie.urlImagem}'"
+            : "NULL";
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
+        int dubbedInBytes = movie.dublado ? 1 : 0;
+        int soulFragmentInBytes = movie.fragmentoAlma ? 1 : 0;
+        string treatedRatingValue = GetTreatedRatingValue(movie.nota);
 
-            myCommand.CommandText =
-                "Update Movies " +
-                    "Set " +
-                        $"name = '{movie.nome}'," +
-                        $"imageUrl = {treatedUrlImage}," +
-                        $"rating = {treatedRatingValue}," +
-                        $"dubbed = {dubbedInBytes}," +
-                        $"soulFragment = {soulFragmentInBytes}," +
-                        $"authorId = {movie.autor.id} " +
-                $"Where id = {movie.id};";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
 
-            await myCommand.ExecuteReaderAsync();
+        myCommand.CommandText =
+            "Update Movies " +
+                "Set " +
+                    $"name = '{movie.nome}'," +
+                    $"imageUrl = {treatedUrlImage}," +
+                    $"rating = {treatedRatingValue}," +
+                    $"dubbed = {dubbedInBytes}," +
+                    $"soulFragment = {soulFragmentInBytes}," +
+                    $"authorId = {movie.autor.id} " +
+            $"Where id = {movie.id};";
 
-            await DataBase.CloseConnection();
-        }
+        await myCommand.ExecuteReaderAsync();
 
-        public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
+    }
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                "Select " +
-                    "Movies.id As movie_id, Movies.name As movie_name, Movies.imageUrl As movie_imageUrl, " +
-                    "rating, dubbed, soulFragment, authorId, " +
-                    "a.id as author_id, a.name As author_name, a.imageUrl As author_imageUrl " +
-                "From Movies " +
-                "Left Join Authors a " +
-                    "On authorId = a.id " +
-                MountConditionalQueryPartByFilters(filters, "Movie_x_Category", "Movies") + ";";
+    public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters) {
+        await DataBase.OpenConnectionIfClosed();
 
-            List<MovieDTO> movies = new List<MovieDTO>();
-            using var myReader = await myCommand.ExecuteReaderAsync();
-
-            while (myReader.Read())
-            {
-                MovieDTO movieToAdd = new MovieDTO()
-                {
-                    id = myReader.GetInt32("movie_id"),
-                    nome = myReader.GetString("movie_name"),
-                    urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
-                    dublado = myReader.GetBoolean("dubbed"),
-                    fragmentoAlma = myReader.GetBoolean("soulFragment"),
-                    autor = new AuthorDTO() {
-                        id = myReader.GetInt32("author_id"),
-                        nome = myReader.GetString("author_name"),
-                        urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
-                    },
-                    nota = myReader.GetFloat("rating")
-                };
-
-                movies.Add(movieToAdd);
-            }
-
-            await DataBase.CloseConnection();
-
-            foreach (MovieDTO movie in movies) {
-                IEnumerable<CategoryDTO> categories = await GetCategoriesByContentId(
-                    (int)movie.id, ContentTypesEnum.Cinema
-                );
-
-                movie.categorias = categories;
-            }
-
-            return movies;
-        }
-
-        public async Task<MovieDTO?> GetMovieById(int movieId)
-        {
-            await DataBase.OpenConnectionIfClosed();
-
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = "Select " + 
-                "Movies.id As movie_id, Movies.name As movie_name, Movies.imageUrl As movie_imageUrl, " + 
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText =
+            "Select " +
+                "Movies.id As movie_id, Movies.name As movie_name, Movies.imageUrl As movie_imageUrl, " +
                 "rating, dubbed, soulFragment, authorId, " +
-                "Authors.id As author_id, Authors.name As author_name, Authors.imageUrl As author_imageUrl " +
-                "From Movies " +
-                "Inner Join Authors " +
-                    "On authorId = Authors.id " +
-                $"Where Movies.id = {movieId};";
+                "a.id as author_id, a.name As author_name, a.imageUrl As author_imageUrl " +
+            "From Movies " +
+            "Left Join Authors a " +
+                "On authorId = a.id " +
+            MountConditionalQueryPartByFilters(filters, "Movie_x_Category", "Movies") + ";";
 
-            MovieDTO movie = null;
-            using var myReader = await myCommand.ExecuteReaderAsync();
+        List<MovieDTO> movies = new List<MovieDTO>();
+        using var myReader = await myCommand.ExecuteReaderAsync();
 
-            while (myReader.Read())
-            {
-                movie = new MovieDTO()
-                {
-                    id = myReader.GetInt32("movie_id"),
-                    nome = myReader.GetString("movie_name"),
-                    urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
-                    nota = myReader.GetFloat("rating"),
-                    dublado = myReader.GetBoolean("dubbed"),
-                    fragmentoAlma = myReader.GetBoolean("soulFragment"),
-                    autor = new AuthorDTO() {
-                        id = myReader.GetInt32("author_id"),
-                        nome = myReader.GetString("author_name"),
-                        urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
-                    },
-                };
-            }
+        while (myReader.Read()) {
+            MovieDTO movieToAdd = new MovieDTO() {
+                id = myReader.GetInt32("movie_id"),
+                nome = myReader.GetString("movie_name"),
+                urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
+                dublado = myReader.GetBoolean("dubbed"),
+                fragmentoAlma = myReader.GetBoolean("soulFragment"),
+                autor = new AuthorDTO() {
+                    id = myReader.GetInt32("author_id"),
+                    nome = myReader.GetString("author_name"),
+                    urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
+                },
+                nota = myReader.GetFloat("rating")
+            };
 
-            await DataBase.CloseConnection();
-
-            return movie;
+            movies.Add(movieToAdd);
         }
 
-        public async Task UpdateMovieImageUrlById(int movieId, string? imageUrl)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
 
-            string newImageUrl = String.IsNullOrEmpty(imageUrl) ? "NULL" : $"'{imageUrl}'";
+        foreach (MovieDTO movie in movies) {
+            IEnumerable<CategoryDTO> categories = await GetCategoriesByContentId(
+                (int)movie.id, ContentTypesEnum.Cinema
+            );
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                @"Update Movies " +
-                    "Set " +
-                        $"imageUrl = {newImageUrl} " +
-                    $"Where id = {movieId};";
-
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
+            movie.categorias = categories;
         }
+
+        return movies;
+    }
+
+    public async Task<MovieDTO?> GetMovieById(int movieId) {
+        await DataBase.OpenConnectionIfClosed();
+
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText = "Select " + 
+            "Movies.id As movie_id, Movies.name As movie_name, Movies.imageUrl As movie_imageUrl, " + 
+            "rating, dubbed, soulFragment, authorId, " +
+            "Authors.id As author_id, Authors.name As author_name, Authors.imageUrl As author_imageUrl " +
+            "From Movies " +
+            "Inner Join Authors " +
+                "On authorId = Authors.id " +
+            $"Where Movies.id = {movieId};";
+
+        MovieDTO movie = null;
+        using var myReader = await myCommand.ExecuteReaderAsync();
+
+        while (myReader.Read()) {
+            movie = new MovieDTO() {
+                id = myReader.GetInt32("movie_id"),
+                nome = myReader.GetString("movie_name"),
+                urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
+                nota = myReader.GetFloat("rating"),
+                dublado = myReader.GetBoolean("dubbed"),
+                fragmentoAlma = myReader.GetBoolean("soulFragment"),
+                autor = new AuthorDTO() {
+                    id = myReader.GetInt32("author_id"),
+                    nome = myReader.GetString("author_name"),
+                    urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
+                },
+            };
+        }
+
+        await DataBase.CloseConnection();
+
+        return movie;
+    }
+
+    public async Task UpdateMovieImageUrlById(int movieId, string? imageUrl) {
+        await DataBase.OpenConnectionIfClosed();
+
+        string newImageUrl = String.IsNullOrEmpty(imageUrl) ? "NULL" : $"'{imageUrl}'";
+
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText =
+            @"Update Movies " +
+                "Set " +
+                    $"imageUrl = {newImageUrl} " +
+                $"Where id = {movieId};";
+
+        await myCommand.ExecuteReaderAsync();
+
+        await DataBase.CloseConnection();
     }
 }

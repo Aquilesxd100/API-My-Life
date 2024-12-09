@@ -4,27 +4,23 @@ using my_life_api.Resources;
 using my_life_api.Models.Requests;
 using my_life_api.ValidatorsFilters.Security;
 
-namespace my_life_api.Controllers
-{
-    [ApiController]
-    [Route("[controller]")]
-    public class LoginController : ControllerBase
-    {
-        private readonly ILogger<LoginController> _logger;
+namespace my_life_api.Controllers;
 
-        public LoginController(ILogger<LoginController> logger)
-        {
-            _logger = logger;
-        }
+[ApiController]
+[Route("[controller]")]
+public class LoginController : ControllerBase {
+    private readonly ILogger<LoginController> _logger;
 
-        [HttpPost(Name = "login")]
-        [ServiceFilter(typeof(LoginValidationFilter))]
-        public IActionResult Login([FromBody] LoginRequest request)
-        {
-            AuthorizationService authorizationService = new AuthorizationService();
-            
-            string token = authorizationService.Login(request.senha);
-            return Ok(ApiResponse.CreateBody(200, "Login efetuado com sucesso!", new { token } ));
-        }
+    public LoginController(ILogger<LoginController> logger) {
+        _logger = logger;
+    }
+
+    [HttpPost(Name = "login")]
+    [ServiceFilter(typeof(LoginValidationFilter))]
+    public IActionResult Login([FromBody] LoginRequest request) {
+        AuthorizationService authorizationService = new AuthorizationService();
+        
+        string token = authorizationService.Login(request.senha);
+        return Ok(ApiResponse.CreateBody(200, "Login efetuado com sucesso!", new { token } ));
     }
 }

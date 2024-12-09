@@ -1,162 +1,149 @@
 ﻿using System.Data;
 using MySql.Data.MySqlClient;
-using my_life_api.Models.Requests;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Database.Managers
-{
-    public class AuthorDBManager : BaseDBManager
-    {
-        public async Task<int> CreateAuthor(AuthorDTO author)
-        {
-            await DataBase.OpenConnectionIfClosed();
+namespace my_life_api.Database.Managers;
 
-            string treatedUrlImage = author.urlImagem != null
-                ? $"'{author.urlImagem}'"
-                : "NULL";
+public class AuthorDBManager : BaseDBManager {
+    public async Task<int> CreateAuthor(AuthorDTO author) {
+        await DataBase.OpenConnectionIfClosed();
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
+        string treatedUrlImage = author.urlImagem != null
+            ? $"'{author.urlImagem}'"
+            : "NULL";
 
-            myCommand.CommandText =
-                "Insert Into Authors" +
-                    "(name, imageUrl, contentTypeId)" +
-                    "Values" +
-                        $"('{author.nome}', {treatedUrlImage}, {(int)author.idTipoConteudo});"
-                + "Select Last_Insert_Id();";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
 
-            var result = await myCommand.ExecuteScalarAsync();
-            int authorId = int.Parse(result.ToString());
+        myCommand.CommandText =
+            "Insert Into Authors" +
+                "(name, imageUrl, contentTypeId)" +
+                "Values" +
+                    $"('{author.nome}', {treatedUrlImage}, {(int)author.idTipoConteudo});"
+            + "Select Last_Insert_Id();";
 
-            await DataBase.CloseConnection();
+        var result = await myCommand.ExecuteScalarAsync();
+        int authorId = int.Parse(result.ToString());
 
-            return authorId;
-        }
+        await DataBase.CloseConnection();
 
-        public async Task UpdateAuthor(AuthorDTO author)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        return authorId;
+    }
 
-            string treatedUrlImage = author.urlImagem != null
-                ? $"'{author.urlImagem}'"
-                : "NULL";
+    public async Task UpdateAuthor(AuthorDTO author) {
+        await DataBase.OpenConnectionIfClosed();
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
+        string treatedUrlImage = author.urlImagem != null
+            ? $"'{author.urlImagem}'"
+            : "NULL";
 
-            myCommand.CommandText =
-                "Update Authors " +
-                    "Set " +
-                        $"name = '{author.nome}'," +
-                        $"imageUrl = {treatedUrlImage} " +
-                $"Where id = {author.id};";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
 
-            await myCommand.ExecuteReaderAsync();
+        myCommand.CommandText =
+            "Update Authors " +
+                "Set " +
+                    $"name = '{author.nome}'," +
+                    $"imageUrl = {treatedUrlImage} " +
+            $"Where id = {author.id};";
 
-            await DataBase.CloseConnection();
-        }
+        await myCommand.ExecuteReaderAsync();
 
-        public async Task DeleteAuthorById(int authorId)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
+    }
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
+    public async Task DeleteAuthorById(int authorId) {
+        await DataBase.OpenConnectionIfClosed();
 
-            myCommand.CommandText =
-                "Delete From Authors " +
-                    $"Where id = {authorId};";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
 
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
-        }
-
-        public async Task<AuthorDTO?> GetAuthorById(int authorId)
-        {
-            await DataBase.OpenConnectionIfClosed();
-
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id, name, imageUrl, contentTypeId " +
-                "From Authors " +
+        myCommand.CommandText =
+            "Delete From Authors " +
                 $"Where id = {authorId};";
 
-            AuthorDTO author = null;
-            using var myReader = await myCommand.ExecuteReaderAsync();
+        await myCommand.ExecuteReaderAsync();
 
-            while (myReader.Read())
-            {
-                author = new AuthorDTO()
-                {
-                    id = myReader.GetInt32("id"),
-                    nome = myReader.GetString("name"),
-                    urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
-                    idTipoConteudo = (ContentTypesEnum)myReader.GetInt32("contentTypeId"),
-                };
-            }
+        await DataBase.CloseConnection();
+    }
 
-            await DataBase.CloseConnection();
+    public async Task<AuthorDTO?> GetAuthorById(int authorId) {
+        await DataBase.OpenConnectionIfClosed();
 
-            return author;
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText = @" Select id, name, imageUrl, contentTypeId " +
+            "From Authors " +
+            $"Where id = {authorId};";
+
+        AuthorDTO author = null;
+        using var myReader = await myCommand.ExecuteReaderAsync();
+
+        while (myReader.Read()) {
+            author = new AuthorDTO() {
+                id = myReader.GetInt32("id"),
+                nome = myReader.GetString("name"),
+                urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
+                idTipoConteudo = (ContentTypesEnum)myReader.GetInt32("contentTypeId"),
+            };
         }
 
-        public async Task<IEnumerable<AuthorDTO>> GetAuthorsByContentTypeId(int contentTypeId)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id, name, imageUrl, contentTypeId " +
-                "From Authors " +
-                $"Where contentTypeId = {contentTypeId};";
+        return author;
+    }
 
-            List<AuthorDTO> authors = new List<AuthorDTO>();
-            using var myReader = await myCommand.ExecuteReaderAsync();
+    public async Task<IEnumerable<AuthorDTO>> GetAuthorsByContentTypeId(int contentTypeId) {
+        await DataBase.OpenConnectionIfClosed();
 
-            while (myReader.Read())
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText = @" Select id, name, imageUrl, contentTypeId " +
+            "From Authors " +
+            $"Where contentTypeId = {contentTypeId};";
+
+        List<AuthorDTO> authors = new List<AuthorDTO>();
+        using var myReader = await myCommand.ExecuteReaderAsync();
+
+        while (myReader.Read()) {
+            AuthorDTO authorToAdd = new AuthorDTO()
             {
-                AuthorDTO authorToAdd = new AuthorDTO()
-                {
-                    id = myReader.GetInt32("id"),
-                    nome = myReader.GetString("name"),
-                    urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
-                    idTipoConteudo = (ContentTypesEnum)contentTypeId,
-                };
-                authors.Add(authorToAdd);
-            }
-
-            await DataBase.CloseConnection();
-
-            return authors;
+                id = myReader.GetInt32("id"),
+                nome = myReader.GetString("name"),
+                urlImagem = myReader.IsDBNull("imageUrl") ? null : myReader.GetString("imageUrl"),
+                idTipoConteudo = (ContentTypesEnum)contentTypeId,
+            };
+            authors.Add(authorToAdd);
         }
 
-        public async Task<bool> GetIsAuthorAssignedToWork(AuthorDTO author)
-        {
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
 
-            string tableName = GetTableNameByContentType((ContentTypesEnum)author.idTipoConteudo);
+        return authors;
+    }
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText = @" Select id " +
-                $"From {tableName} " +
-                $"Where authorId = {author.id} " +
-                "Limit 1;";
+    public async Task<bool> GetIsAuthorAssignedToWork(AuthorDTO author) {
+        await DataBase.OpenConnectionIfClosed();
 
-            using var myReader = await myCommand.ExecuteReaderAsync();
+        string tableName = GetTableNameByContentType((ContentTypesEnum)author.idTipoConteudo);
 
-            bool isAuthorAssignedToWork = false;
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText = @" Select id " +
+            $"From {tableName} " +
+            $"Where authorId = {author.id} " +
+            "Limit 1;";
 
-            while (myReader.Read() && !isAuthorAssignedToWork)
-            {
-                isAuthorAssignedToWork = true;
-            }
+        using var myReader = await myCommand.ExecuteReaderAsync();
 
-            await DataBase.CloseConnection();
+        bool isAuthorAssignedToWork = false;
 
-            return isAuthorAssignedToWork;
+        while (myReader.Read() && !isAuthorAssignedToWork) {
+            isAuthorAssignedToWork = true;
         }
+
+        await DataBase.CloseConnection();
+
+        return isAuthorAssignedToWork;
     }
 }

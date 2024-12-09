@@ -1,21 +1,18 @@
-﻿namespace my_life_api.Models.Requests.Author
-{
-    public class AuthorCreateRequestDTO
-    {
-        public string nome { get; set; }
+﻿namespace my_life_api.Models.Requests.Author;
 
-        public IFormFile? imagem { get; set; }
+public class AuthorCreateRequestDTO {
+    public string nome { get; set; }
 
-        public int idTipoConteudo { get; set; }
+    public IFormFile? imagem { get; set; }
 
-        public AuthorCreateRequestDTO BuildFromObj(dynamic dynamicObject)
-        {
-            nome = dynamicObject.nome;
-            idTipoConteudo = dynamicObject.idTipoConteudo;
+    public int idTipoConteudo { get; set; }
 
-            imagem = dynamicObject.imagem;
+    public AuthorCreateRequestDTO BuildFromObj(dynamic dynamicObject) {
+        nome = dynamicObject.nome;
+        idTipoConteudo = dynamicObject.idTipoConteudo;
 
-            return this;
-        }
+        imagem = dynamicObject.imagem;
+
+        return this;
     }
 }

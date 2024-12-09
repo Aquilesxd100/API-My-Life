@@ -2,99 +2,96 @@
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.Database.Managers
-{
-    public class ContentDBManager : BaseDBManager
-    {
-        public async Task DeleteContent(
-            int contentId,
-            ContentTypesEnum contentType
-        ) {
-            string tableName = GetTableNameByContentType(contentType);
+namespace my_life_api.Database.Managers;
 
-            await DataBase.OpenConnectionIfClosed();
+public class ContentDBManager : BaseDBManager {
+    public async Task DeleteContent(
+        int contentId,
+        ContentTypesEnum contentType
+    ) {
+        string tableName = GetTableNameByContentType(contentType);
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                $"Delete From {tableName} " +
-                    $"Where id = {contentId};";
+        await DataBase.OpenConnectionIfClosed();
 
-            await myCommand.ExecuteReaderAsync();
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText =
+            $"Delete From {tableName} " +
+                $"Where id = {contentId};";
 
-            await DataBase.CloseConnection();
+        await myCommand.ExecuteReaderAsync();
+
+        await DataBase.CloseConnection();
+    }
+
+    public async Task CreateContentCategoryRelations(
+        ContentTypesEnum contentType,
+        int contentId,
+        IEnumerable<int> categoriesIdsToAdd
+    ) {
+        string contentName = GetContentNameByContentType(contentType);
+        string contentColumnIdName = $"{contentName.ToLower()}Id";
+
+        string valuesToAddQueryPart = "";
+        foreach (int categoryId in categoriesIdsToAdd) {
+            if (valuesToAddQueryPart.Length > 0)
+                valuesToAddQueryPart += ", ";
+
+            valuesToAddQueryPart += $"({contentId}, {categoryId})";
         }
+        valuesToAddQueryPart += ";";
 
-        public async Task CreateContentCategoryRelations(
-            ContentTypesEnum contentType,
-            int contentId,
-            IEnumerable<int> categoriesIdsToAdd
-        ) {
-            string contentName = GetContentNameByContentType(contentType);
-            string contentColumnIdName = $"{contentName.ToLower()}Id";
+        await DataBase.OpenConnectionIfClosed();
 
-            string valuesToAddQueryPart = "";
-            foreach (int categoryId in categoriesIdsToAdd)
-            {
-                if (valuesToAddQueryPart.Length > 0)
-                    valuesToAddQueryPart += ", ";
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText =
+            $"Insert Into {contentName}_x_Category" +
+                $"({contentColumnIdName}, categoryId)" +
+                "Values" +
+                    valuesToAddQueryPart;
 
-                valuesToAddQueryPart += $"({contentId}, {categoryId})";
-            }
-            valuesToAddQueryPart += ";";
+        await myCommand.ExecuteReaderAsync();
 
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
+    }
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                $"Insert Into {contentName}_x_Category" +
-                    $"({contentColumnIdName}, categoryId)" +
-                    "Values" +
-                        valuesToAddQueryPart;
+    public async Task DeleteContentCategoryRelations(
+        ContentTypesEnum contentType,
+        int contentId
+    ) {
+        string contentName = GetContentNameByContentType(contentType);
+        string contentColumnIdName = $"{contentName.ToLower()}Id";
 
-            await myCommand.ExecuteReaderAsync();
+        await DataBase.OpenConnectionIfClosed();
 
-            await DataBase.CloseConnection();
-        }
+        MySqlCommand myCommand = new MySqlCommand();
+        myCommand.Connection = DataBase.connection;
+        myCommand.CommandText =
+            $"Delete From {contentName}_x_Category " +
+                $"Where {contentColumnIdName} = {contentId};";
 
-        public async Task DeleteContentCategoryRelations(
-            ContentTypesEnum contentType,
-            int contentId
-        ) {
-            string contentName = GetContentNameByContentType(contentType);
-            string contentColumnIdName = $"{contentName.ToLower()}Id";
+        await myCommand.ExecuteReaderAsync();
 
-            await DataBase.OpenConnectionIfClosed();
+        await DataBase.CloseConnection();
+    }
 
-            MySqlCommand myCommand = new MySqlCommand();
-            myCommand.Connection = DataBase.connection;
-            myCommand.CommandText =
-                $"Delete From {contentName}_x_Category " +
-                    $"Where {contentColumnIdName} = {contentId};";
+    public async Task UpdateContentCategoryRelations(
+        ContentTypesEnum contentType,
+        int contentId,
+        IEnumerable<int> idsCategorias
+    ) {
+            await DeleteContentCategoryRelations(
+                contentType,
+                contentId
+            );
 
-            await myCommand.ExecuteReaderAsync();
-
-            await DataBase.CloseConnection();
-        }
-
-        public async Task UpdateContentCategoryRelations(
-            ContentTypesEnum contentType,
-            int contentId,
-            IEnumerable<int> idsCategorias
-        ) {
-                await DeleteContentCategoryRelations(
+            if (idsCategorias.Count() > 0) {
+                await CreateContentCategoryRelations(
                     contentType,
-                    contentId
+                    contentId,
+                    idsCategorias
                 );
-
-                if (idsCategorias.Count() > 0) {
-                    await CreateContentCategoryRelations(
-                        contentType,
-                        contentId,
-                        idsCategorias
-                    );
-                }
-        }
+            }
     }
 }

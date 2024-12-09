@@ -9,11 +9,12 @@ DotNetEnv.Env.Load();
 string dataBaseUrl = Environment.GetEnvironmentVariable("DATA_BASE_URL");
 DataBase.ConfigureDataBase(dataBaseUrl);
 
-string ftpServer = Environment.GetEnvironmentVariable("FTP_SERVER");
-string ftpUsername = Environment.GetEnvironmentVariable("FTP_USERNAME");
-string ftpPassword = Environment.GetEnvironmentVariable("FTP_PASSWORD");
-string storageBaseUrl = Environment.GetEnvironmentVariable("STORAGE_BASE_URL");
-FtpManager.ConfigureFtpServer(ftpServer, ftpUsername, ftpPassword, storageBaseUrl);
+FtpManager.ConfigureFtpServer(
+    Environment.GetEnvironmentVariable("FTP_SERVER"),
+    Environment.GetEnvironmentVariable("FTP_USERNAME"),
+    Environment.GetEnvironmentVariable("FTP_PASSWORD"),
+    Environment.GetEnvironmentVariable("STORAGE_BASE_URL")
+);
 
 CustomApiConfigs customApiConfigs = new CustomApiConfigs();
 
@@ -32,8 +33,7 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RequestBodyBufferingMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
