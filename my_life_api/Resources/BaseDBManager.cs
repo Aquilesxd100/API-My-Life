@@ -95,7 +95,10 @@ public abstract class BaseDBManager {
             {
                 id = myReader.GetInt32("category_id"),
                 nome = myReader.GetString("category_name"),
-                iconeBase64 = myReader.IsDBNull("iconBase64") ? null : myReader.GetString("iconBase64"),
+                iconeBase64 = 
+                    myReader.IsDBNull("iconBase64") 
+                        ? null 
+                        : myReader.GetString("iconBase64"),
                 idTipoConteudo = (ContentTypesEnum)myReader.GetInt32("contentTypeId"),
             };
             categories.Add(categoryToAdd);

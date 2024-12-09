@@ -130,7 +130,10 @@ public class RecordController : ControllerBase {
 
         await service.DeleteRecordMainImg(dbRecord);
 
-        return Ok(ApiResponse.CreateBody(200, "A imagem principal do registro foi excluída com sucesso!"));
+        return Ok(ApiResponse.CreateBody(
+            200, 
+            "A imagem principal do registro foi excluída com sucesso!"
+        ));
     }
 
     [HttpPost("registroImgSecundaria", Name = "registroImgSecundaria")]

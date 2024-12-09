@@ -15,11 +15,17 @@ public class DeleteRecordSecondaryImgValidationFilter : ICustomActionFilter {
         string imgId = GetParamValue("idImagem", context);
 
         if (string.IsNullOrEmpty(recordId)) {
-            throw new CustomException(400, "O param 'idRegistro' é obrigatório e não foi informado.");
+            throw new CustomException(
+                400, 
+                "O param 'idRegistro' é obrigatório e não foi informado."
+            );
         }
 
         if (string.IsNullOrEmpty(imgId)) {
-            throw new CustomException(400, "O param 'idImagem' é obrigatório e não foi informado.");
+            throw new CustomException(
+                400, 
+                "O param 'idImagem' é obrigatório e não foi informado."
+            );
         }
 
         int convertedRecordId = 0;

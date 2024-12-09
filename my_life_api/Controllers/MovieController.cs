@@ -34,9 +34,18 @@ public class MovieController : ControllerBase {
         ContentFilters filters = new ContentFilters() {
             soulFragment = fragmentoAlma != null ? (fragmentoAlma == "true") : null,
             authorId = idAutor != null ? Int32.Parse(idAutor) : null,
-            categoriesIds = idsCategorias != null ? idsCategorias.Select(id => Int32.Parse(id)) : null,
-            ratingGreaterEqualTo = notaMaiorIgualQue != null ? float.Parse(notaMaiorIgualQue) : null,
-            ratingLesserEqualTo = notaMenorIgualQue != null ? float.Parse(notaMenorIgualQue) : null,
+            categoriesIds = 
+                idsCategorias != null 
+                    ? idsCategorias.Select(id => Int32.Parse(id)) 
+                    : null,
+            ratingGreaterEqualTo = 
+                notaMaiorIgualQue != null 
+                    ? float.Parse(notaMaiorIgualQue) 
+                    : null,
+            ratingLesserEqualTo = 
+                notaMenorIgualQue != null 
+                    ? float.Parse(notaMenorIgualQue) 
+                    : null,
             name = nome,
             dubbed = dublado != null ? (dublado == "true") : null,
         };

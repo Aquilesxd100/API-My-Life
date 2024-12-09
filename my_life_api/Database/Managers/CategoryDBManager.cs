@@ -98,7 +98,10 @@ public class CategoryDBManager : BaseDBManager {
             category = new CategoryDTO() {
                 id = myReader.GetInt32("id"),
                 nome = myReader.GetString("name"),
-                iconeBase64 = myReader.IsDBNull("iconBase64") ? null : myReader.GetString("iconBase64"),
+                iconeBase64 = 
+                    myReader.IsDBNull("iconBase64") 
+                        ? null 
+                        : myReader.GetString("iconBase64"),
                 idTipoConteudo = (ContentTypesEnum)myReader.GetInt32("contentTypeId"),
             };
         }
@@ -124,7 +127,10 @@ public class CategoryDBManager : BaseDBManager {
             CategoryDTO categoryToAdd = new CategoryDTO() {
                 id = myReader.GetInt32("id"),
                 nome = myReader.GetString("name"),
-                iconeBase64 = myReader.IsDBNull("iconBase64") ? null : myReader.GetString("iconBase64"),
+                iconeBase64 = 
+                    myReader.IsDBNull("iconBase64") 
+                        ? null 
+                        : myReader.GetString("iconBase64"),
                 idTipoConteudo = (ContentTypesEnum)contentTypeId,
             };
             categories.Add(categoryToAdd);

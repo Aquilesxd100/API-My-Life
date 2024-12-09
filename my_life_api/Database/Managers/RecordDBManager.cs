@@ -27,7 +27,10 @@ public class RecordDBManager : BaseDBManager {
                 dataCriacao = myReader.GetDateTime("createdAt"),
                 nome = myReader.GetString("name"),
                 ano = myReader.GetInt16("year").ToString(),
-                urlImagemPrincipal = myReader.IsDBNull("mainImageUrl") ? null : myReader.GetString("mainImageUrl"),
+                urlImagemPrincipal = 
+                    myReader.IsDBNull("mainImageUrl") 
+                        ? null 
+                        : myReader.GetString("mainImageUrl"),
             };
             records.Add(recordToAdd);
         }
@@ -57,7 +60,10 @@ public class RecordDBManager : BaseDBManager {
                 nome = myReader.GetString("name"),
                 ano = myReader.GetInt16("year").ToString(),
                 conteudo = myReader.GetString("content"),
-                urlImagemPrincipal = myReader.IsDBNull("mainImageUrl") ? null : myReader.GetString("mainImageUrl"),
+                urlImagemPrincipal = 
+                    myReader.IsDBNull("mainImageUrl") 
+                        ? null 
+                        : myReader.GetString("mainImageUrl"),
             };
         }
 

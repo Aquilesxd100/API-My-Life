@@ -26,7 +26,9 @@ public class CategoryController : ControllerBase {
         CategoryService service = new CategoryService();
 
         ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
-        IEnumerable<CategoryDTO> categories = await service.GetCategoriesByContentTypeId(contentTypeId);
+        IEnumerable<CategoryDTO> categories = await service.GetCategoriesByContentTypeId(
+            contentTypeId
+        );
 
         return Ok(ApiResponse.CreateBody(
             200,

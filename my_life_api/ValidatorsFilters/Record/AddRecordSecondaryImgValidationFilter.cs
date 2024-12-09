@@ -15,7 +15,9 @@ public class AddRecordSecondaryImgValidationFilter : ICustomActionFilter {
     ) {
         var requestObj = await GetFormDataContent<RecordAddSecondaryImgDTO>(context);
 
-        RecordAddSecondaryImgDTO secondaryImgRequest = new RecordAddSecondaryImgDTO().BuildFromObj(requestObj);
+        RecordAddSecondaryImgDTO secondaryImgRequest = new RecordAddSecondaryImgDTO().BuildFromObj(
+            requestObj
+        );
 
         var validator = new ContentValidator();
         if (secondaryImgRequest.imagemSecundaria != null) { 

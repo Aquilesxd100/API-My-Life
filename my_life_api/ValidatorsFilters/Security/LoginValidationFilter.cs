@@ -13,8 +13,10 @@ public class LoginValidationFilter : ICustomActionFilter {
         var body = await GetBodyContent<LoginRequest>(context);
 
         if (string.IsNullOrEmpty(body.senha)) {
-
-            throw new CustomException(400, "Informe sua senha pelo corpo da requisição para efetuar login.");
+            throw new CustomException(
+                400, 
+                "Informe sua senha pelo corpo da requisição para efetuar login."
+            );
         }
 
         await next();

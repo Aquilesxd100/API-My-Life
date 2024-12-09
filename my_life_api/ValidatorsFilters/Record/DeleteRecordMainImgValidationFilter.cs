@@ -42,7 +42,10 @@ public class DeleteRecordMainImgValidationFilter : ICustomActionFilter {
         }
 
         if (String.IsNullOrEmpty(record.urlImagemPrincipal)) {
-            throw new CustomException(400, "Esse registro não tem uma imagem principal registrada.");
+            throw new CustomException(
+                400, 
+                "Esse registro não tem uma imagem principal registrada."
+            );
         }
 
         context.HttpContext.Request.Headers.Add(

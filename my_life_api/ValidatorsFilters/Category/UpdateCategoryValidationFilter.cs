@@ -75,7 +75,10 @@ public class UpdateCategoryValidationFilter : ICustomActionFilter {
             );
         }
 
-        context.HttpContext.Request.Headers.Add("requestedItem", JsonConvert.SerializeObject(categoryDbData));
+        context.HttpContext.Request.Headers.Add(
+            "requestedItem", 
+            JsonConvert.SerializeObject(categoryDbData)
+        );
 
         await next();
     }

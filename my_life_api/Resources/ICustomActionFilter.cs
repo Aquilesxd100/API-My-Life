@@ -128,7 +128,13 @@ public class ICustomActionFilter : IAsyncActionFilter {
     public async Task<T> GetBodyContent<T>(ActionExecutingContext context) {
         context.HttpContext.Request.Body.Position = 0;
 
-        using var reader = new StreamReader(context.HttpContext.Request.Body, encoding: System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 1024, leaveOpen: true);
+        using var reader = new StreamReader(
+            context.HttpContext.Request.Body, 
+            encoding: System.Text.Encoding.UTF8, 
+            detectEncodingFromByteOrderMarks: false, 
+            bufferSize: 1024, 
+            leaveOpen: true
+        );
         var bodyJson = await reader.ReadToEndAsync();
 
         try {
@@ -164,7 +170,11 @@ public class ICustomActionFilter : IAsyncActionFilter {
                 }
 
                 if (invalidFields.Count() > 0) {
-                    throw new CustomException(400, "Um ou mais campos estão no formato incorreto.", invalidFields);
+                    throw new CustomException(
+                        400, 
+                        "Um ou mais campos estão no formato incorreto.", 
+                        invalidFields
+                    );
                 }
             }
 
@@ -176,7 +186,10 @@ public class ICustomActionFilter : IAsyncActionFilter {
         } catch (CustomException exception) { 
             throw exception; 
         } catch (Exception exception) {
-            throw new CustomException(400, "Formato do corpo da requisição incorreto, verifique e tente novamente.");
+            throw new CustomException(
+                400, 
+                "Formato do corpo da requisição incorreto, verifique e tente novamente."
+            );
         }
     }
 
@@ -292,7 +305,9 @@ public class ICustomActionFilter : IAsyncActionFilter {
                 } else {
                     // Verifica se a propriedade esperada é opcional/nullable
                     // ou seja, foi typada com "?" Ex: int?
-                    bool isPropertyRequired = !expectedType.IsGenericType || expectedType.GetGenericTypeDefinition() != typeof(Nullable<>);
+                    bool isPropertyRequired = 
+                        !expectedType.IsGenericType 
+                        || expectedType.GetGenericTypeDefinition() != typeof(Nullable<>);
 
                     if (isPropertyRequired) {
                         invalidFields.Add(new InvalidFieldError(
@@ -343,8 +358,10 @@ public class ICustomActionFilter : IAsyncActionFilter {
         }
     }
 
-    public virtual async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate del)
-    {
+    public virtual async Task OnActionExecutionAsync(
+        ActionExecutingContext context, 
+        ActionExecutionDelegate del
+    ) {
     }
 
     public void OnActionExecuted(ActionExecutedContext context)

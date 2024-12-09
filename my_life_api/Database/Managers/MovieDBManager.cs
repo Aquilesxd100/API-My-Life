@@ -88,13 +88,19 @@ public class MovieDBManager : BaseDBManager {
             MovieDTO movieToAdd = new MovieDTO() {
                 id = myReader.GetInt32("movie_id"),
                 nome = myReader.GetString("movie_name"),
-                urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
+                urlImagem = 
+                    myReader.IsDBNull("movie_imageUrl") 
+                        ? null 
+                        : myReader.GetString("movie_imageUrl"),
                 dublado = myReader.GetBoolean("dubbed"),
                 fragmentoAlma = myReader.GetBoolean("soulFragment"),
                 autor = new AuthorDTO() {
                     id = myReader.GetInt32("author_id"),
                     nome = myReader.GetString("author_name"),
-                    urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
+                    urlImagem = 
+                        myReader.IsDBNull("author_imageUrl") 
+                            ? null 
+                            : myReader.GetString("author_imageUrl")
                 },
                 nota = myReader.GetFloat("rating")
             };
@@ -136,14 +142,20 @@ public class MovieDBManager : BaseDBManager {
             movie = new MovieDTO() {
                 id = myReader.GetInt32("movie_id"),
                 nome = myReader.GetString("movie_name"),
-                urlImagem = myReader.IsDBNull("movie_imageUrl") ? null : myReader.GetString("movie_imageUrl"),
+                urlImagem = 
+                    myReader.IsDBNull("movie_imageUrl") 
+                        ? null 
+                        : myReader.GetString("movie_imageUrl"),
                 nota = myReader.GetFloat("rating"),
                 dublado = myReader.GetBoolean("dubbed"),
                 fragmentoAlma = myReader.GetBoolean("soulFragment"),
                 autor = new AuthorDTO() {
                     id = myReader.GetInt32("author_id"),
                     nome = myReader.GetString("author_name"),
-                    urlImagem = myReader.IsDBNull("author_imageUrl") ? null : myReader.GetString("author_imageUrl")
+                    urlImagem = 
+                        myReader.IsDBNull("author_imageUrl") 
+                            ? null 
+                            : myReader.GetString("author_imageUrl")
                 },
             };
         }

@@ -4,7 +4,8 @@ namespace my_life_api.Middlewares;
 
 public class RequestBodyBufferingMiddleware {
     private readonly RequestDelegate _next;
-    public static readonly ImmutableList<string> methodsWithBody = ImmutableList.Create("POST", "PUT");
+    public static readonly ImmutableList<string> methodsWithBody = 
+        ImmutableList.Create("POST", "PUT");
 
     public RequestBodyBufferingMiddleware(RequestDelegate next) {
         _next = next;

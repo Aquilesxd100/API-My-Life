@@ -26,7 +26,9 @@ public class DeleteImgController : ControllerBase {
     ) {
         ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
         int resourceId = Int32.Parse(idConteudo);
-        dynamic requestedItem = JsonConvert.DeserializeObject(HttpContext.Request.Headers["requestedItem"]);
+        dynamic requestedItem = JsonConvert.DeserializeObject(
+            HttpContext.Request.Headers["requestedItem"]
+        );
 
         DeleteImgService service = new DeleteImgService();
         await service.DeleteContentImg(contentTypeId, requestedItem);

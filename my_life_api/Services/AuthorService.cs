@@ -43,7 +43,10 @@ public class AuthorService {
         };
 
         if (authorReq.imagem != null) {
-            string imageUrl = await FtpManager.UploadAuthorPicture((int)authorReq.id, authorReq.imagem);
+            string imageUrl = await FtpManager.UploadAuthorPicture(
+                (int)authorReq.id, 
+                authorReq.imagem
+            );
             author.urlImagem = imageUrl;
         }
 

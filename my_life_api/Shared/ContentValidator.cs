@@ -56,7 +56,10 @@ public class ContentValidator {
             }
 
             if (authorDbData.idTipoConteudo != contentType) {
-                throw new CustomException(400, "Esse autor não é válido para esse tipo de conteúdo.");
+                throw new CustomException(
+                    400, 
+                    "Esse autor não é válido para esse tipo de conteúdo."
+                );
             }
         } else {
             throw new CustomException(
@@ -69,7 +72,10 @@ public class ContentValidator {
     public void ValidateRating(float? rating) {
         if (rating != null) {
             if (Validator.IsRatingInvalid((float)rating)) {
-                throw new CustomException(400, "A nota informada é inválida, o valor deve ser entre 0 e 10.");
+                throw new CustomException(
+                    400, 
+                    "A nota informada é inválida, o valor deve ser entre 0 e 10."
+                );
             }
         }
     }

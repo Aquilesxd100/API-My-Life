@@ -77,7 +77,10 @@ public class AuthorizationService {
 
         } catch (Exception exception) {
             Console.WriteLine(exception);
-            throw new CustomException(400, "Um erro ocorreu ao validar suas credenciais, verifique-as e tente novamente.");
+            throw new CustomException(
+                400, 
+                "Um erro ocorreu ao validar suas credenciais, verifique-as e tente novamente."
+            );
         }
     }
 }
