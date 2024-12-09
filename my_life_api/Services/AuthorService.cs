@@ -7,6 +7,7 @@ namespace my_life_api.Services
 {
     public class AuthorService
     {
+        private AuthorDBManager dbManager = new AuthorDBManager();
         public async Task<IEnumerable<AuthorDTO>> GetAuthorsByContentTypeId(ContentTypesEnum contentType)
         {
             AuthorDBManager authorDbManager = new AuthorDBManager();
@@ -23,16 +24,14 @@ namespace my_life_api.Services
                 nome = authorReq.nome,      
             };
 
-            AuthorDBManager authorDbManager = new AuthorDBManager();
-
-            int authorId = await authorDbManager.CreateAuthor(author);
+            int authorId = await dbManager.CreateAuthor(author);
             author.id = authorId;
 
             if (authorReq.imagem != null) {
                 string imageUrl = await FtpManager.UploadAuthorPicture(authorId, authorReq.imagem);
                 author.urlImagem = imageUrl;
 
-                await authorDbManager.UpdateAuthor(author);
+                await dbManager.UpdateAuthor(author);
             }
         }
 
@@ -54,16 +53,12 @@ namespace my_life_api.Services
                 author.nome = authorReq.nome;
             }
 
-            AuthorDBManager authorDbManager = new AuthorDBManager();
-
-            await authorDbManager.UpdateAuthor(author);
+            await dbManager.UpdateAuthor(author);
         }
 
         public async Task DeleteAuthorById(int idAuthor)
         {
-            AuthorDBManager authorDbManager = new AuthorDBManager();
-
-            await authorDbManager.DeleteAuthorById(idAuthor);
+            await dbManager.DeleteAuthorById(idAuthor);
         }
 
         public async Task DeleteAuthorImg(AuthorDTO dbAuthor)
@@ -73,10 +68,8 @@ namespace my_life_api.Services
                 FtpManager.authorPicturesFolder
             );
 
-            AuthorDBManager authorDbManager = new AuthorDBManager();
-
             dbAuthor.urlImagem = null;
-            await authorDbManager.UpdateAuthor(dbAuthor);
+            await dbManager.UpdateAuthor(dbAuthor);
         }
     }
 }

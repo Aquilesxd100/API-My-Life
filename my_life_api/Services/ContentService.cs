@@ -6,18 +6,18 @@ namespace my_life_api.Services
 {
     public class ContentService
     {
+        private ContentDBManager dbManager = new ContentDBManager();
+
         public async Task DeleteContentById( 
             ContentTypesEnum contentType,
             int contentId,
             string? urlImagem
         ) {
-            ContentDBManager contentDbManager = new ContentDBManager();
-
-            await contentDbManager.DeleteContentCategoryRelations(contentType, contentId);
-            await contentDbManager.DeleteContent(contentId, contentType);
+            await dbManager.DeleteContentCategoryRelations(contentType, contentId);
+            await dbManager.DeleteContent(contentId, contentType);
 
             string imgFolder = 
-                contentDbManager.GetContentNameByContentType(contentType).ToLower()
+                dbManager.GetContentNameByContentType(contentType).ToLower()
                 + "_pictures";
 
             if (!string.IsNullOrEmpty(urlImagem)) {

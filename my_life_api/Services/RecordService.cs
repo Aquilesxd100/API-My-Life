@@ -7,10 +7,11 @@ namespace my_life_api.Services
 {
     public class RecordService
     {
+        private RecordDBManager dbManager = new RecordDBManager();
+
         public async Task<IEnumerable<RecordDTO>> GetBasicRecords()
         {
-            RecordDBManager recordDbManager = new RecordDBManager();
-            IEnumerable<RecordDTO> records = await recordDbManager.GetBasicRecords();
+            IEnumerable<RecordDTO> records = await dbManager.GetBasicRecords();
 
             return records;
         }
@@ -24,9 +25,7 @@ namespace my_life_api.Services
                 conteudo = recordReq.conteudo,             
             };
 
-            RecordDBManager recordDbManager = new RecordDBManager();
-
-            int recordId = await recordDbManager.CreateRecord(record);
+            int recordId = await dbManager.CreateRecord(record);
             record.id = recordId;
 
            string folderPath = $"{FtpManager.recordPicturesFolder}/{recordId}";
@@ -39,7 +38,7 @@ namespace my_life_api.Services
                 );
                 record.urlImagemPrincipal = imageUrl;
 
-                await recordDbManager.UpdateRecord(record);
+                await dbManager.UpdateRecord(record);
             }
 
             if (recordReq.imagensSecundarias.Count() > 0) {
@@ -62,7 +61,7 @@ namespace my_life_api.Services
                     });
                 }
 
-                await recordDbManager.CreateSecondaryImagesRelations(
+                await dbManager.CreateSecondaryImagesRelations(
                     recordId,
                     secondaryImgsToSave
                 );
@@ -100,38 +99,30 @@ namespace my_life_api.Services
                 record.conteudo = recordReq.conteudo;
             }
 
-            RecordDBManager recordDbManager = new RecordDBManager();
-
-            await recordDbManager.UpdateRecord(record);
+            await dbManager.UpdateRecord(record);
         }
 
         public async Task DeleteRecordById(int recordId) {
-            RecordDBManager recordDbManager = new RecordDBManager();
-
-            await recordDbManager.DeleteRecordById(recordId);
+            await dbManager.DeleteRecordById(recordId);
 
             string folderPath = $"{FtpManager.recordPicturesFolder}/{recordId}";
             await FtpManager.DeleteFolder(folderPath);
         }
 
-        public async Task DeleteRecordMainImg(RecordDTO record) {
-            RecordDBManager recordDbManager = new RecordDBManager();        
-
+        public async Task DeleteRecordMainImg(RecordDTO record) {        
             await FtpManager.DeleteFile(
                 FtpManager.GetImageNameFromUrl(record.urlImagemPrincipal), 
                 FtpManager.recordPicturesFolder + "/" + record.id
             );
 
             record.urlImagemPrincipal = null;
-            await recordDbManager.UpdateRecord(record);
+            await dbManager.UpdateRecord(record);
         }
 
         public async Task AddRecordSecondaryImg(
             int recordId,
             IFormFile secondaryImg
         ) {
-            RecordDBManager recordDbManager = new RecordDBManager();        
-
             Guid myuuid = Guid.NewGuid();
             string imgId = recordId + "-" + myuuid.ToString();
 
@@ -141,7 +132,7 @@ namespace my_life_api.Services
                 secondaryImg
             );
 
-            await recordDbManager.CreateSecondaryImageRelation(
+            await dbManager.CreateSecondaryImageRelation(
                 recordId,
                 new SecondaryImgToSave() { 
                     id = imgId, 
@@ -154,14 +145,12 @@ namespace my_life_api.Services
             int recordId,
             SecondaryImgDTO img
         ) {
-            RecordDBManager recordDbManager = new RecordDBManager();        
-
             await FtpManager.DeleteFile(
                 FtpManager.GetImageNameFromUrl(img.urlImagem), 
                 FtpManager.recordPicturesFolder + "/" + recordId
             );
 
-            await recordDbManager.DeleteSecondaryImageRelation(recordId, img.id);
+            await dbManager.DeleteSecondaryImageRelation(recordId, img.id);
         }
     }
 }

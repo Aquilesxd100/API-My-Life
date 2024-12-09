@@ -7,10 +7,11 @@ namespace my_life_api.Services
 {
     public class MovieService
     {
+        private MovieDBManager dbManager = new MovieDBManager();
+
         public async Task<IEnumerable<MovieDTO>> GetMovies(ContentFilters filters)
         {
-            MovieDBManager movieDbManager = new MovieDBManager();
-            IEnumerable<MovieDTO> movies = await movieDbManager.GetMovies(filters);
+            IEnumerable<MovieDTO> movies = await dbManager.GetMovies(filters);
 
             return movies;
         }
@@ -26,9 +27,7 @@ namespace my_life_api.Services
                 nota = movieReq.nota
             };
 
-            MovieDBManager movieDbManager = new MovieDBManager();
-
-            int movieId = await movieDbManager.CreateMovie(movie);
+            int movieId = await dbManager.CreateMovie(movie);
             movie.id = movieId;
 
             if (movieReq.imagem != null) {
@@ -38,7 +37,7 @@ namespace my_life_api.Services
                     movieReq.imagem
                 );
 
-                await movieDbManager.UpdateMovieImageUrlById((int)movie.id, imageUrl);
+                await dbManager.UpdateMovieImageUrlById((int)movie.id, imageUrl);
             }
 
             if (movieReq.idsCategorias.Count() > 0) {
@@ -79,9 +78,7 @@ namespace my_life_api.Services
                 movie.nome = movieReq.nome;
             }
 
-            MovieDBManager movieDbManager = new MovieDBManager();
-
-            await movieDbManager.UpdateMovie(movie);
+            await dbManager.UpdateMovie(movie);
 
             if (movieReq.idsCategorias != null) {
                 ContentDBManager contentDbManager = new ContentDBManager();

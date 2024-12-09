@@ -6,10 +6,11 @@ namespace my_life_api.Services
 {
     public class CategoryService
     {
+        private CategoryDBManager dbManager = new CategoryDBManager();
+
         public async Task<IEnumerable<CategoryDTO>> GetCategoriesByContentTypeId(ContentTypesEnum contentType)
         {
-            CategoryDBManager categoryDbManager = new CategoryDBManager();
-            IEnumerable<CategoryDTO> categories = await categoryDbManager.GetCategoriesByContentTypeId(
+            IEnumerable<CategoryDTO> categories = await dbManager.GetCategoriesByContentTypeId(
                 (int)contentType
             );
 
@@ -25,8 +26,7 @@ namespace my_life_api.Services
                 iconeBase64 = categoryReq.iconeBase64
             };
 
-            CategoryDBManager categoryDbManager = new CategoryDBManager();
-            await categoryDbManager.CreateCategory(category);
+            await dbManager.CreateCategory(category);
         }
 
         public async Task UpdateCategory(CategoryUpdateRequestDTO categoryReq, CategoryDTO dbCategory)
@@ -46,25 +46,19 @@ namespace my_life_api.Services
                 category.nome = categoryReq.nome;
             }
 
-            CategoryDBManager categoryDbManager = new CategoryDBManager();
-
-            await categoryDbManager.UpdateCategory(category);
+            await dbManager.UpdateCategory(category);
         }
 
         public async Task DeleteCategory(CategoryDTO category)
         {
-            CategoryDBManager categoryDbManager = new CategoryDBManager();
-
-            await categoryDbManager.DeleteCategoryRelations(category.id, category.idTipoConteudo);
-            await categoryDbManager.DeleteCategoryById(category.id);
+            await dbManager.DeleteCategoryRelations(category.id, category.idTipoConteudo);
+            await dbManager.DeleteCategoryById(category.id);
         }
 
         public async Task DeleteCategoryIcon(CategoryDTO category)
         {
-            CategoryDBManager categoryDbManager = new CategoryDBManager();
-
             category.iconeBase64 = null;
-            await categoryDbManager.UpdateCategory(category);
+            await dbManager.UpdateCategory(category);
         }
     }
 }
