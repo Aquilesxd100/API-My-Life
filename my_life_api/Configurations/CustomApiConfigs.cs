@@ -4,6 +4,7 @@ using my_life_api.Resources;
 using my_life_api.Validators.Author;
 using my_life_api.Validators.Security;
 using my_life_api.Validators;
+using my_life_api.Validators.Record;
 
 namespace my_life_api.Configurations
 {
@@ -77,6 +78,14 @@ namespace my_life_api.Configurations
         public void AddValidationScopes(IServiceCollection services) {
             services.AddScoped<TokenValidationFilter>();
             services.AddScoped<LoginValidationFilter>();
+
+            services.AddScoped<GetRecordValidationFilter>();
+            services.AddScoped<CreateRecordValidationFilter>();
+            services.AddScoped<UpdateRecordValidationFilter>();
+            services.AddScoped<AddRecordSecondaryImgValidationFilter>();
+            services.AddScoped<DeleteRecordValidationFilter>();
+            services.AddScoped<DeleteRecordMainImgValidationFilter>();
+            services.AddScoped<DeleteRecordSecondaryImgValidationFilter>();
 
             services.AddScoped<CreateAuthorValidationFilter>();
             services.AddScoped<UpdateAuthorValidationFilter>();

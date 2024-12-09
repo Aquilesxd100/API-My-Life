@@ -45,7 +45,8 @@ namespace my_life_api.Resources
         Float = 4,
         File = 5,
         IntEnumerable = 6,
-        StringEnumerable = 7
+        StringEnumerable = 7,
+        FileEnumerable = 8
     }
 
     static public class MatchedFormDataFieldTypesArray
@@ -69,7 +70,8 @@ namespace my_life_api.Resources
             new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float?)),
             new MatchedFormDataFieldType(FormDataFieldType.File, typeof(IFormFile)),
             new MatchedFormDataFieldType(FormDataFieldType.IntEnumerable, typeof(IEnumerable<int>)),
-            new MatchedFormDataFieldType(FormDataFieldType.StringEnumerable, typeof(IEnumerable<string>))
+            new MatchedFormDataFieldType(FormDataFieldType.StringEnumerable, typeof(IEnumerable<string>)),
+            new MatchedFormDataFieldType(FormDataFieldType.FileEnumerable, typeof(IEnumerable<IFormFile>))
         );
 
         public static ImmutableArray<MatchedFormDataFieldType> Get()
@@ -295,6 +297,15 @@ namespace my_life_api.Resources
                             break;
                             case FormDataFieldType.File:
                                 reqValueConverter = () => formData.Files[propertyName];
+                            break;
+                            case FormDataFieldType.FileEnumerable:
+                                reqValueConverter = () => {
+                                    // Se informado o campo, mas vazio, retorna vazio
+                                    if (formData.Files[propertyName] == null) return Array.Empty<IFormFile>();
+
+                                    // Retorna todos os arquivos do respectivo campo
+                                    return formData.Files.GetFiles(propertyName); 
+                                };
                             break;
                         }
                     } else {
