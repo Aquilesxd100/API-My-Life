@@ -8,6 +8,7 @@ namespace my_life_api.Resources
         static private AsyncFtpClient client;
         static private string storageBaseUrl;
 
+        public static readonly string recordPicturesFolder = "record_pictures";
         public static readonly string authorPicturesFolder = "author_pictures";
         public static readonly string moviePicturesFolder = "movie_pictures";
         public static readonly string animePicturesFolder = "anime_pictures";
@@ -61,6 +62,38 @@ namespace my_life_api.Resources
             if (fileExists) {
                 await client.DeleteFile($"{uploadPath}/{fileName}");
             }
+        }
+
+        public static async Task<string> UploadRecordMainPicture(int recordId, IFormFile image)
+        {
+            await OpenConnectionIfClosed();
+
+            string fileName = GenerateImageName(recordId, image, "record-main-img-");
+
+            string folderPath = $"{recordPicturesFolder}/{recordId}";
+            await UploadFile(fileName, image, folderPath);
+
+            await CloseConnection();
+
+            string pictureUrl = $"{storageBaseUrl}/{recordPicturesFolder}/{recordId}/{fileName}";
+            return pictureUrl;
+        }
+
+        public static async Task<string> UploadRecordSecondaryPicture(
+            int recordId, 
+            string pictureId, 
+            IFormFile image
+        ) {
+            await OpenConnectionIfClosed();
+
+            string fileName = GenerateImageName(null, image, $"secondary-img-{pictureId}");
+
+            await UploadFile(fileName, image, $"{recordPicturesFolder}/{recordId}");
+
+            await CloseConnection();
+
+            string pictureUrl = $"{storageBaseUrl}/{recordPicturesFolder}/{recordId}/{fileName}";
+            return pictureUrl;
         }
 
         public static async Task<string> UploadAuthorPicture(int authorId, IFormFile image)
@@ -124,11 +157,27 @@ namespace my_life_api.Resources
             return pictureUrl;
         }
 
-        private static string GenerateImageName(int id, IFormFile img, string prefix = null)
+        public static async Task CreateFolder(string path) {
+            await OpenConnectionIfClosed();
+
+            await client.CreateDirectory(path);
+
+            await CloseConnection();
+        }
+
+        public static async Task DeleteFolder(string path) {
+            await OpenConnectionIfClosed();
+
+            await client.DeleteDirectory(path);
+
+            await CloseConnection();
+        }
+
+        private static string GenerateImageName(int? id, IFormFile img, string prefix = null)
         {
             string mimeType = img.ContentType;
             string imgExtension = "." + mimeType.Substring(mimeType.IndexOf("/") + 1);
-            string fileName =  (prefix ?? "") + id + imgExtension;
+            string fileName =  (prefix ?? "") + (id != null ? id : "") + imgExtension;
 
             return fileName;
         }
