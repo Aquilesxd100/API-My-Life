@@ -112,11 +112,11 @@ namespace my_life_api.Controllers
                 idsCategorias = idsCategorias,
             };
 
-            MovieDTO dbAuthor = JsonConvert.DeserializeObject<MovieDTO>(
+            MovieDTO dbMovie = JsonConvert.DeserializeObject<MovieDTO>(
                 HttpContext.Request.Headers["requestedItem"]
             );
 
-            await service.UpdateMovie(movieReq, dbAuthor);
+            await service.UpdateMovie(movieReq, dbMovie);
 
             return Ok(ApiResponse.CreateBody(200, "Filme atualizado com sucesso!"));
         }
