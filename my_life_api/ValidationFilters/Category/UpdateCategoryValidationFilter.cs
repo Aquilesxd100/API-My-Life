@@ -6,7 +6,7 @@ using my_life_api.Resources;
 using my_life_api.Shared;
 using my_life_api.Models.Requests.Category;
 
-namespace my_life_api.ValidatorsFilters.Category;
+namespace my_life_api.ValidationFilters.Category;
 
 public class UpdateCategoryValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

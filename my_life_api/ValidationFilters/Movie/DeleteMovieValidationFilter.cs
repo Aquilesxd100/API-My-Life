@@ -4,7 +4,7 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.ValidatorsFilters.Movie;
+namespace my_life_api.ValidationFilters.Movie;
 
 public class DeleteMovieValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

@@ -4,9 +4,9 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.ValidatorsFilters.Record;
+namespace my_life_api.ValidationFilters.Record;
 
-public class DeleteRecordMainImgValidationFilter : ICustomActionFilter {
+public class GetRecordValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(
         ActionExecutingContext context,
         ActionExecutionDelegate next
@@ -39,13 +39,6 @@ public class DeleteRecordMainImgValidationFilter : ICustomActionFilter {
 
         if (record == null) {
             throw new CustomException(404, "Nenhum registro com esse id foi encontrado.");
-        }
-
-        if (String.IsNullOrEmpty(record.urlImagemPrincipal)) {
-            throw new CustomException(
-                400, 
-                "Esse registro não tem uma imagem principal registrada."
-            );
         }
 
         context.HttpContext.Request.Headers.Add(

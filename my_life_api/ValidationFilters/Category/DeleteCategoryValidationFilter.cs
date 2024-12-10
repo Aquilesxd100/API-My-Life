@@ -4,7 +4,7 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.ValidatorsFilters.Category;
+namespace my_life_api.ValidationFilters.Category;
 
 public class DeleteCategoryValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

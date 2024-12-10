@@ -4,7 +4,7 @@ using my_life_api.Models.Requests.Author;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidatorsFilters.Author;
+namespace my_life_api.ValidationFilters.Author;
 
 public class CreateAuthorValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

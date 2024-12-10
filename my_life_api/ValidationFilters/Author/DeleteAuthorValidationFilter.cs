@@ -4,9 +4,9 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.ValidatorsFilters.Author;
+namespace my_life_api.ValidationFilters.Author;
 
-public class DeleteAuthorImgValidationFilter : ICustomActionFilter {
+public class DeleteAuthorValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(
         ActionExecutingContext context,
         ActionExecutionDelegate next
@@ -41,8 +41,13 @@ public class DeleteAuthorImgValidationFilter : ICustomActionFilter {
             throw new CustomException(404, "Nenhum autor com esse id foi encontrado.");
         }
 
-        if (String.IsNullOrEmpty(author.urlImagem)) {
-            throw new CustomException(400, "Esse autor não tem imagem registrada.");
+        bool isAuthorAssignedToWork = await authorDbManager.GetIsAuthorAssignedToWork(author);
+
+        if (isAuthorAssignedToWork) {
+            throw new CustomException(
+                400, 
+                "Esse autor esta atualmente designado a uma ou mais obras, exclua elas primeiro para poder o remover."
+            );
         }
 
         context.HttpContext.Request.Headers.Add(

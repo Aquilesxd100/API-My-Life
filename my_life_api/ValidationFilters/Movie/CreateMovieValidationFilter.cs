@@ -1,42 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json;
-using my_life_api.Database.Managers;
 using my_life_api.Models;
+using my_life_api.Models.Requests.Movie;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Shared;
-using my_life_api.Models.Requests.Movie;
 
-namespace my_life_api.ValidatorsFilters.Movie;
+namespace my_life_api.ValidationFilters.Movie;
 
-public class UpdateMovieValidationFilter : ICustomActionFilter {
+public class CreateMovieValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(
         ActionExecutingContext context,
         ActionExecutionDelegate next
     ) {
-        var movieObj = await GetFormDataContent<MovieUpdateRequestDTO>(context);
+        var movieObj = await GetFormDataContent<MovieCreateRequestDTO>(context);
 
-        MovieUpdateRequestDTO movie = new MovieUpdateRequestDTO().BuildFromObj(movieObj);
+        MovieCreateRequestDTO movie = new MovieCreateRequestDTO().BuildFromObj(movieObj);
         ContentValidator validator = new ContentValidator();
 
-        validator.ValidateName(movie.nome);
+        validator.ValidateName(movie.nome, true);
         validator.ValidateOptionalImgFile(movie.imagem);
         validator.ValidateRating(movie.nota);
-
-        dynamic? movieDbData = null;
-        if (movie.id > 0) {
-            MovieDBManager movieDbManager = new MovieDBManager();
-            movieDbData = await movieDbManager.GetMovieById((int)movie.id);
-
-            if (movieDbData == null) {
-                throw new CustomException(404, "Não existe nenhum filme com esse id.");
-            }
-        } else {
-            throw new CustomException(
-                400,
-                "O id do filme informado é inválido."
-            );
-        }
+        await validator.ValidateContentAuthor(movie.idAutor, ContentTypesEnum.Cinema);
 
         if (movie.idsCategorias.Count() > 0) {
             CategoryService categoryService = new CategoryService();
@@ -53,11 +37,6 @@ public class UpdateMovieValidationFilter : ICustomActionFilter {
                 }
             }
         }
-
-        context.HttpContext.Request.Headers.Add(
-            "requestedItem", 
-            JsonConvert.SerializeObject(movieDbData)
-        );
 
         await next();
     }

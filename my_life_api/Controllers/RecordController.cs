@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Models.Requests.Record;
-using my_life_api.ValidatorsFilters.Security;
-using my_life_api.ValidatorsFilters.Record;
+using my_life_api.ValidationFilters.Security;
+using my_life_api.ValidationFilters.Record;
 using my_life_api.Models;
 
 namespace my_life_api.Controllers;

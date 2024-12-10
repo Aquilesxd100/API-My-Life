@@ -4,7 +4,7 @@ using my_life_api.Models.Requests.Record;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidatorsFilters.Record;
+namespace my_life_api.ValidationFilters.Record;
 
 public class CreateRecordValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

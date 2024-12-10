@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using my_life_api.Resources;
 using my_life_api.Services;
-using my_life_api.ValidatorsFilters.Security;
-using my_life_api.ValidatorsFilters.Movie;
-using my_life_api.ValidatorsFilters;
+using my_life_api.ValidationFilters.Security;
+using my_life_api.ValidationFilters.Movie;
+using my_life_api.ValidationFilters;
 using my_life_api.Models.Requests.Movie;
 using my_life_api.Models;
 

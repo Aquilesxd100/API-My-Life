@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Services;
-using my_life_api.ValidatorsFilters;
-using my_life_api.ValidatorsFilters.Security;
-using my_life_api.ValidatorsFilters.Category;
+using my_life_api.ValidationFilters;
+using my_life_api.ValidationFilters.Security;
+using my_life_api.ValidationFilters.Category;
 using my_life_api.Models.Requests.Category;
 
 namespace my_life_api.Controllers;

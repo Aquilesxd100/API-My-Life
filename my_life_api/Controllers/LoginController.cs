@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using my_life_api.Services;
 using my_life_api.Resources;
 using my_life_api.Models.Requests;
-using my_life_api.ValidatorsFilters.Security;
+using my_life_api.ValidationFilters.Security;
 
 namespace my_life_api.Controllers;
 
