@@ -1,4 +1,6 @@
-﻿namespace my_life_api.Models;
+﻿using my_life_api.Shared.ContentResources;
+
+namespace my_life_api.Models;
 
 public class AuthorDTO {
     public int? id { get; set; }

@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using my_life_api.Database;
 using my_life_api.Models;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Resources;
 

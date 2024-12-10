@@ -3,6 +3,17 @@ using my_life_api.Models;
 
 namespace my_life_api.Shared.ContentResources;
 
+public enum ContentTypesEnum {
+    Musical = 1,
+    Cinema = 2,
+    Mangas = 3,
+    Jogos = 4,
+    Frases = 5,
+    Livros = 6,
+    Seriado  = 7,
+    Animes = 8
+}
+
 public class ContentValidator {
     public void ValidateName(string name, bool isRequired = false) {
         if (isRequired) {

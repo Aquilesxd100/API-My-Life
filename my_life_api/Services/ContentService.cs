@@ -1,6 +1,6 @@
 ﻿using my_life_api.Database.Managers;
-using my_life_api.Models;
 using my_life_api.Resources;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Services;
 
