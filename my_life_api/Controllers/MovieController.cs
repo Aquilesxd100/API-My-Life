@@ -4,9 +4,9 @@ using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.ValidationFilters.Security;
 using my_life_api.ValidationFilters.Movie;
-using my_life_api.ValidationFilters;
 using my_life_api.Models.Requests.Movie;
 using my_life_api.Models;
+using my_life_api.ValidationFilters.Content;
 
 namespace my_life_api.Controllers;
 

@@ -4,6 +4,7 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Shared;
+using my_life_api.Shared.ContentResources;
 using my_life_api.Models.Requests.Record;
 
 namespace my_life_api.ValidationFilters.Record;

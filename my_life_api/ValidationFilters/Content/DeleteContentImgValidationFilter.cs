@@ -5,7 +5,7 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 
-namespace my_life_api.ValidationFilters;
+namespace my_life_api.ValidationFilters.Content;
 
 public class DeleteContentImgValidationFilter : ICustomActionFilter {
     public static readonly ImmutableArray<int> validContentTypesIds = ImmutableArray.Create(

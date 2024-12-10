@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.Models;
-using my_life_api.ValidationFilters;
+using my_life_api.ValidationFilters.Content;
 using my_life_api.ValidationFilters.Security;
 
 namespace my_life_api.Controllers;

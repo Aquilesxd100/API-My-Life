@@ -3,7 +3,7 @@ using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Shared;
 
-namespace my_life_api.ValidationFilters;
+namespace my_life_api.ValidationFilters.Content;
 
 public class ContentFiltersParamValidationFilter : ICustomActionFilter {
     public override async Task OnActionExecutionAsync(

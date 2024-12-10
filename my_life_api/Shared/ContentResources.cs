@@ -1,7 +1,7 @@
 ﻿using my_life_api.Database.Managers;
 using my_life_api.Models;
 
-namespace my_life_api.Shared;
+namespace my_life_api.Shared.ContentResources;
 
 public class ContentValidator {
     public void ValidateName(string name, bool isRequired = false) {
@@ -80,3 +80,5 @@ public class ContentValidator {
         }
     }
 }
+
+

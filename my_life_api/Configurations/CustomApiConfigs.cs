@@ -7,6 +7,7 @@ using my_life_api.ValidationFilters.Security;
 using my_life_api.ValidationFilters.Category;
 using my_life_api.ValidationFilters.Movie;
 using my_life_api.ValidationFilters.Record;
+using my_life_api.ValidationFilters.Content;
 
 namespace my_life_api.Configurations;
 
