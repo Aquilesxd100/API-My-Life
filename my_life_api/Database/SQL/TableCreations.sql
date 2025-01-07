@@ -109,7 +109,7 @@ Create Table Series (
 
 Create Table Series_x_Category (
   id Integer Auto_Increment Primary Key,
-  serieId Integer Not Null,
+  seriesId Integer Not Null,
   Foreign Key (seriesId) References Series(id),
   categoryId Integer Not Null,
   Foreign Key (categoryId) References Categories(id)
