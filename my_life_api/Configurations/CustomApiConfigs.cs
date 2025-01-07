@@ -24,12 +24,16 @@ public class DefaultApiErrorType {
 public enum DefaultApiErrorsEnum {
     NotRegistered,
     EmptyBody,
-    FieldIsRequired
+    FieldIsRequired,
+    ValueIsNotValid,
+    ValueIsInvalid
 }
 public class CustomApiConfigs : ControllerBase {
     public static readonly ImmutableList<DefaultApiErrorType> errorTypes = ImmutableList.Create(
         new DefaultApiErrorType(DefaultApiErrorsEnum.EmptyBody, "A non-empty request body is required."),
-        new DefaultApiErrorType(DefaultApiErrorsEnum.FieldIsRequired, "field is required.")
+        new DefaultApiErrorType(DefaultApiErrorsEnum.FieldIsRequired, "field is required."),
+        new DefaultApiErrorType(DefaultApiErrorsEnum.ValueIsNotValid, "is not valid"),
+        new DefaultApiErrorType(DefaultApiErrorsEnum.ValueIsInvalid, "is invalid")
     );
 
     public void OverrideInvalidModels(ApiBehaviorOptions options) {
@@ -48,6 +52,8 @@ public class CustomApiConfigs : ControllerBase {
 
             switch (error.type) {
                 // Continua a execução do código validando o campo específico no local devido
+                case DefaultApiErrorsEnum.ValueIsNotValid:
+                case DefaultApiErrorsEnum.ValueIsInvalid:
                 case DefaultApiErrorsEnum.FieldIsRequired:
                     context.HttpContext.Request.Headers.Add("Has-Invalid-Field", "true");
                     return null;
