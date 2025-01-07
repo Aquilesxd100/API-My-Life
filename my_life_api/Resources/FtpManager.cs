@@ -9,12 +9,6 @@ public static class FtpManager {
 
     public static readonly string recordPicturesFolder = "record_pictures";
     public static readonly string authorPicturesFolder = "author_pictures";
-    public static readonly string moviePicturesFolder = "movie_pictures";
-    public static readonly string animePicturesFolder = "anime_pictures";
-    public static readonly string mangaPicturesFolder = "manga_pictures";
-    public static readonly string seriesPicturesFolder = "series_pictures";
-    public static readonly string bookPicturesFolder = "book_pictures";
-    public static readonly string gamePicturesFolder = "game_pictures";
 
     public static async Task OpenConnectionIfClosed() {
         if (!client.IsConnected) {
@@ -116,39 +110,12 @@ public static class FtpManager {
     }
 
     public static async Task<string> UploadContentPicture(
+        ContentTypeData contentTypeData,  
         int contentId,
-        ContentTypesEnum contentType,  
         IFormFile image
     ) {
-        string prefixFileName = "";
-        string folderName = "";
-
-        switch (contentType) {
-            case ContentTypesEnum.Animes:
-                prefixFileName = "anime-";
-                folderName = animePicturesFolder;
-            break;
-            case ContentTypesEnum.Mangas:
-                prefixFileName = "manga-";
-                folderName = mangaPicturesFolder;
-            break;
-            case ContentTypesEnum.Seriado:
-                prefixFileName = "series-";
-                folderName = seriesPicturesFolder;
-            break;
-            case ContentTypesEnum.Livros:
-                prefixFileName = "book-";
-                folderName = bookPicturesFolder;
-            break;
-            case ContentTypesEnum.Jogos:
-                prefixFileName = "game-";
-                folderName = gamePicturesFolder;
-            break;
-            case ContentTypesEnum.Cinema:
-                prefixFileName = "movie-";
-                folderName = moviePicturesFolder;
-            break;
-        }
+        string prefixFileName = $"{contentTypeData.name}-";
+        string folderName = contentTypeData.storageFolder;
 
         await OpenConnectionIfClosed();
 

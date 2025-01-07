@@ -4,7 +4,6 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Shared;
-using my_life_api.Shared.ContentResources;
 using my_life_api.Models.Requests.Record;
 
 namespace my_life_api.ValidationFilters.Record;
@@ -43,11 +42,9 @@ public class UpdateRecordValidationFilter : ICustomActionFilter {
             }
         }
 
-        ContentValidator validator = new ContentValidator();
+        Validator.ValidateName(record.nome);
 
-        validator.ValidateName(record.nome);
-
-        validator.ValidateOptionalImgFile(record.imagemPrincipal);
+        Validator.ValidateOptionalImgFile(record.imagemPrincipal);
 
         if (!string.IsNullOrEmpty(record.conteudo)) {
             if (record.conteudo.Trim().Length == 0) {

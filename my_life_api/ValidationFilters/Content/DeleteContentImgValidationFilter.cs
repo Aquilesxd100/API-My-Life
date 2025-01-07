@@ -4,18 +4,22 @@ using Newtonsoft.Json;
 using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.ValidationFilters.Content;
 
 public class DeleteContentImgValidationFilter : ICustomActionFilter {
-    public static readonly ImmutableArray<int> validContentTypesIds = ImmutableArray.Create(
-        (int)ContentTypesEnum.Mangas,
-        (int)ContentTypesEnum.Animes,
-        (int)ContentTypesEnum.Seriado,
-        (int)ContentTypesEnum.Livros,
-        (int)ContentTypesEnum.Jogos,
-        (int)ContentTypesEnum.Cinema
-    );
+    // Array com ids de 'contentType' de somente os conteudos
+    // que tem imagem, ou seja, a coluna 'imageUrl'
+    public static readonly ImmutableArray<int> validContentTypesIds = ContentUtils.contentTypesData
+        .Where(
+            ctd => ctd.entityType.GetProperties()
+                    .Any(p => p.Name == "imageUrl")
+        )
+        .Select(ctd => 
+            (int)ctd.contentType
+        )
+        .ToImmutableArray<int>();
 
     public override async Task OnActionExecutionAsync(
         ActionExecutingContext context,
@@ -53,41 +57,27 @@ public class DeleteContentImgValidationFilter : ICustomActionFilter {
             );
         }
 
-        dynamic? content = null;
+        ContentTypeData contentTypeData = ContentUtils.GetContentTypeData(
+            (ContentTypesEnum)convertedContentTypeId
+        );
 
-        switch ((ContentTypesEnum)convertedContentTypeId) {
-            case ContentTypesEnum.Animes:
+        ContentDBManager contentDbManager = new ContentDBManager();
+        dynamic? contentItem = await contentDbManager.GetItemByIdAndTypeData(
+            contentTypeData,
+            convertedContentId
+        );
 
-            break;
-            case ContentTypesEnum.Mangas:
-
-            break;
-            case ContentTypesEnum.Seriado:
-
-            break;
-            case ContentTypesEnum.Livros:
-
-            break;
-            case ContentTypesEnum.Jogos:
-
-            break;
-            case ContentTypesEnum.Cinema:
-                MovieDBManager movieDbManager = new MovieDBManager();
-                content = await movieDbManager.GetMovieById(convertedContentId);
-            break;
-        }
-
-        if (content == null) {
+        if (contentItem == null) {
             throw new CustomException(404, "Nenhum conteúdo com esse id foi encontrado.");
         }
 
-        if (String.IsNullOrEmpty(content.urlImagem)) {
+        if (String.IsNullOrEmpty(contentItem.urlImagem)) {
             throw new CustomException(400, "Esse conteudo não tem imagem registrada.");
         }
 
         context.HttpContext.Request.Headers.Add(
             "requestedItem", 
-            JsonConvert.SerializeObject(content)
+            JsonConvert.SerializeObject(contentItem)
         );
 
         await next();

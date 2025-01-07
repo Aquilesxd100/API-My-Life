@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using MySql.Data.MySqlClient;
 using my_life_api.Models;
-using my_life_api.Resources;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Database.Managers;
 
-public class AuthorDBManager : BaseDBManager {
+public class AuthorDBManager {
     public async Task<int> CreateAuthor(AuthorDTO author) {
         await DataBase.OpenConnectionIfClosed();
 
@@ -125,12 +125,15 @@ public class AuthorDBManager : BaseDBManager {
     public async Task<bool> GetIsAuthorAssignedToWork(AuthorDTO author) {
         await DataBase.OpenConnectionIfClosed();
 
-        string tableName = GetTableNameByContentType((ContentTypesEnum)author.idTipoConteudo);
+        ContentTypeData contentTypeData = ContentUtils.GetContentTypeData(
+            (ContentTypesEnum)author.idTipoConteudo
+        );
+        string contentTableName = contentTypeData.dbTableName;
 
         MySqlCommand myCommand = new MySqlCommand();
         myCommand.Connection = DataBase.connection;
         myCommand.CommandText = @" Select id " +
-            $"From {tableName} " +
+            $"From {contentTableName} " +
             $"Where authorId = {author.id} " +
             "Limit 1;";
 

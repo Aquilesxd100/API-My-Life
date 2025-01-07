@@ -10,6 +10,8 @@ public class ContentFiltersParamValidationFilter : ICustomActionFilter {
         ActionExecutingContext context,
         ActionExecutionDelegate next
     ) {
+        string search = GetParamValue("pesquisa", context);
+
         string soulFragment = GetParamValue("fragmentoAlma", context);
         string dubbed = GetParamValue("dublado", context);
         string finished = GetParamValue("finalizado", context);
@@ -20,9 +22,6 @@ public class ContentFiltersParamValidationFilter : ICustomActionFilter {
         string ratingLesserEqualTo = GetParamValue("notaMenorIgualQue", context);
 
         string categoriesIds = GetParamValue("idsCategorias", context);
-
-        string name = GetParamValue("nome", context);
-
 
         IEnumerable<string> allowedBoolTypes = new string[] { "true", "false" };
 
@@ -125,18 +124,18 @@ public class ContentFiltersParamValidationFilter : ICustomActionFilter {
             }
         }
 
-        if (name != null) {
-            if (name.Length > 50) {
+        if (search != null) {
+            if (search.Length > 30) {
                 throw new CustomException(
                     400,
-                    "O param 'nome' não pode ter mais que 50 caracteres."
+                    "O param 'pesquisa' não pode ter mais que 30 caracteres."
                 );
             }
 
-            if (Validator.HasInvalidCharacters(name)) {
+            if (Validator.HasInvalidCharacters(search)) {
                 throw new CustomException(
                     400,
-                    "O param 'nome' contém caracteres inválidos."
+                    "O param 'pesquisa' contém caracteres inválidos."
                 );
             }
         }

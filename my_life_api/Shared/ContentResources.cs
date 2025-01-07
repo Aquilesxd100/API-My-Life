@@ -1,5 +1,9 @@
-﻿using my_life_api.Database.Managers;
-using my_life_api.Models;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using my_life_api.Models.Content;
+using my_life_api.Models.Content.Entities;
 
 namespace my_life_api.Shared.ContentResources;
 
@@ -14,81 +18,95 @@ public enum ContentTypesEnum {
     Animes = 8
 }
 
-public class ContentValidator {
-    public void ValidateName(string name, bool isRequired = false) {
-        if (isRequired) {
-            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0) {
-                throw new CustomException(400, "O nome é obrigatório e não pode ficar vazio.");
-            }
-        }
+public class ContentTypeData {
+    public readonly ContentTypesEnum contentType;
+    public readonly string name;
+    public readonly string nameInPtBr;
+    public readonly string nameInPtBrWithNoAccent;
+    public readonly Type dtoType;
+    public readonly Type entityType;
+    public readonly string dbTableName;
+    public readonly string storageFolder;
+    public readonly string prefixFileName;
 
-        if (!string.IsNullOrEmpty(name)) {
-            if (name.Trim().Length == 0) {
-                throw new CustomException(400, "O nome não pode ser vazio.");
-            }
-
-            if (name.Length > 50) {
-                throw new CustomException(400, "O nome deve ter no máximo 50 caracteres.");
-            }
-
-            if (Validator.HasInvalidCharacters(name)) {
-                throw new CustomException(400, "O nome contém caracteres inválidos.");
-            }
-        }
-    }
-
-    public void ValidateOptionalImgFile(IFormFile? file) {
-        if (file != null) {
-            if (Validator.IsInvalidImageFormat(file)) {
-                throw new CustomException(
-                    400,
-                    "A imagem enviada está em formato incorreto, só são permitidas imagens png, jpg e jpeg."
-                );
-            }
-
-            if (Validator.IsInvalidImageSize(file)) {
-                throw new CustomException(
-                    400, 
-                    "A imagem enviada excede o tamanho máximo de 12mb."
-                );
-            }
-        }
-    }
-
-    public async Task ValidateContentAuthor(int authorId, ContentTypesEnum contentType) {
-        dynamic? authorDbData = null;
-
-        if (authorId > 0) {
-            AuthorDBManager authorDbManager = new AuthorDBManager();
-            authorDbData = await authorDbManager.GetAuthorById(authorId);
-
-            if (authorDbData == null) {
-                throw new CustomException(404, "Não existe nenhum autor com esse id.");
-            }
-
-            if (authorDbData.idTipoConteudo != contentType) {
-                throw new CustomException(
-                    400, 
-                    "Esse autor não é válido para esse tipo de conteúdo."
-                );
-            }
-        } else {
-            throw new CustomException(
-                400,
-                "O id de autor informado é inválido."
+    public ContentTypeData(
+        ContentTypesEnum _contentType,
+        Type _entityType,
+        Type _dtoType,
+        string _name,
+        string _nameInPtBr,
+        string? _dbTableName = null,
+        string? _storageFolder = null,
+        string? _prefixFileName = null
+    ) {
+        this.contentType = _contentType;
+        this.entityType = _entityType;
+        this.dtoType = _dtoType;
+        this.name = _name;
+        this.nameInPtBr = _nameInPtBr;
+        // Guarda uma versao do nome sem acentos
+        this.nameInPtBrWithNoAccent = 
+            Regex.Replace(
+                _nameInPtBr.Normalize(NormalizationForm.FormD),
+                @"[\p{Mn}]",
+                ""
             );
-        }            
+
+        // Se nao informado, define o nome da tabela do item
+        // seguindo o padrao de inicial maiuscula e plural com 's' no final, caso se aplique
+        this.dbTableName = 
+            _dbTableName ?? Format.GetWordWithUpperCaseInitial(_name) + "s";
+
+        // Caso guarde arquivos pelo FTP
+        // EX: caso tenha imagens
+        this.storageFolder = _storageFolder ?? $"{_name}_pictures";
+        this.prefixFileName = _prefixFileName ?? $"{_name}-";
     }
 
-    public void ValidateRating(float? rating) {
-        if (rating != null) {
-            if (Validator.IsRatingInvalid((float)rating)) {
-                throw new CustomException(
-                    400, 
-                    "A nota informada é inválida, o valor deve ser entre 0 e 10."
-                );
-            }
-        }
+    // Se ao terminar todas as chamadas mandarem prefixo deixa-lo obrigatório
+    public IEnumerable<string> GetDbColumnsNames(string? prefix = null) { 
+        PropertyInfo[] properties = this.entityType.GetProperties();
+
+        return properties.Select(prop => 
+            (!String.IsNullOrEmpty(prefix) ? prefix : "") + prop.Name
+        );
+    }
+
+    public string GetRelationTableName() { 
+        return $"{Format.GetWordWithUpperCaseInitial(this.name)}_x_Category";
+    }
+}
+
+public static class ContentUtils { 
+    public static ImmutableArray<ContentTypeData> contentTypesData = ImmutableArray.Create(
+        new ContentTypeData(
+            ContentTypesEnum.Cinema, typeof(MovieEntity), typeof(MovieDTO), "movie", "filme"
+        )
+    );
+
+    public static ContentTypeData GetContentTypeData(ContentTypesEnum contentType) {
+        return ContentUtils.contentTypesData.FirstOrDefault(
+            (ct => ct.contentType == contentType)
+        );
+    }
+
+    public static ContentTypeData GetContentTypeDataByPath(string path) {
+
+        ImmutableArray<KeyValuePair<string, ContentTypesEnum>> contentTypesPairs = 
+            ImmutableArray.ToImmutableArray(
+                contentTypesData.Select(ctd => 
+                    new KeyValuePair<string, ContentTypesEnum>(
+                        ctd.nameInPtBrWithNoAccent, 
+                        ctd.contentType
+                    )
+                )
+            );
+
+       var matchedContentPair = contentTypesPairs.FirstOrDefault(
+           (ctp) => path.Contains(ctp.Key)
+       );
+
+        return GetContentTypeData(matchedContentPair.Value);
     }
 }
 

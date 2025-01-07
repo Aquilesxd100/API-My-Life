@@ -5,7 +5,6 @@ using my_life_api.ValidationFilters;
 using my_life_api.ValidationFilters.Author;
 using my_life_api.ValidationFilters.Security;
 using my_life_api.ValidationFilters.Category;
-using my_life_api.ValidationFilters.Movie;
 using my_life_api.ValidationFilters.Record;
 using my_life_api.ValidationFilters.Content;
 
@@ -100,11 +99,9 @@ public class CustomApiConfigs : ControllerBase {
         services.AddScoped<DeleteCategoryValidationFilter>();
 
         services.AddScoped<ContentTypeParamValidationFilter>();
+        services.AddScoped<CreateUpdateContentValidationFilter>();
         services.AddScoped<ContentFiltersParamValidationFilter>();
+        services.AddScoped<DeleteContentValidationFilter>();
         services.AddScoped<DeleteContentImgValidationFilter>();
-
-        services.AddScoped<CreateMovieValidationFilter>();
-        services.AddScoped<UpdateMovieValidationFilter>();
-        services.AddScoped<DeleteMovieValidationFilter>();
     }
 }

@@ -7,6 +7,7 @@ using my_life_api.ValidationFilters;
 using my_life_api.ValidationFilters.Author;
 using my_life_api.ValidationFilters.Security;
 using my_life_api.Models.Requests.Author;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Controllers;
 

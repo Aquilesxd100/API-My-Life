@@ -1,12 +1,11 @@
 ﻿using System.Data;
 using MySql.Data.MySqlClient;
 using my_life_api.Models;
-using my_life_api.Resources;
 using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Database.Managers;
 
-public class CategoryDBManager : BaseDBManager {
+public class CategoryDBManager {
     public async Task CreateCategory(CategoryDTO category) {
         await DataBase.OpenConnectionIfClosed();
 
@@ -66,16 +65,14 @@ public class CategoryDBManager : BaseDBManager {
 
     public async Task DeleteCategoryRelations(
         int categoryId, 
-        ContentTypesEnum contentType
+        ContentTypeData contentTypeData
     ) {
-        string contentName = GetContentNameByContentType(contentType);
-
         await DataBase.OpenConnectionIfClosed();
 
         MySqlCommand myCommand = new MySqlCommand();
         myCommand.Connection = DataBase.connection;
         myCommand.CommandText =
-            $"Delete From {contentName}_x_Category " +
+            $"Delete From {contentTypeData.GetRelationTableName()} " +
                 $"Where categoryId = {categoryId};";
 
         await myCommand.ExecuteReaderAsync();

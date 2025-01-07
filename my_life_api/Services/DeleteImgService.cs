@@ -5,36 +5,26 @@ using my_life_api.Shared.ContentResources;
 namespace my_life_api.Services;
 
 public class DeleteImgService {
-    public async Task DeleteContentImg(ContentTypesEnum contentType, dynamic requestedItem) {
+    public async Task DeleteContentImg(
+        ContentTypesEnum contentType, 
+        dynamic requestedItem
+    ) {
+        ContentTypeData contentTypeData = ContentUtils.GetContentTypeData(contentType);
+
         int contentId = (int)requestedItem.id;
         string contentImageUrl = (string)requestedItem.urlImagem;
 
-        switch (contentType) {
-            case ContentTypesEnum.Animes:
+        ContentDBManager contentDbManager = new ContentDBManager();
+        await contentDbManager.UpdateItemImageUrlByIdAndTableName(
+            contentId, 
+            contentTypeData.dbTableName,
+            null
+        );
 
-            break;
-            case ContentTypesEnum.Mangas:
-
-            break;
-            case ContentTypesEnum.Seriado:
-
-            break;
-            case ContentTypesEnum.Livros:
-
-            break;
-            case ContentTypesEnum.Jogos:
-
-            break;
-            case ContentTypesEnum.Cinema:
-                MovieDBManager movieDbManager = new MovieDBManager();
-                await movieDbManager.UpdateMovieImageUrlById(contentId, null);
-
-                string reqContentExt = contentImageUrl.Split(".")[^1];
-                await FtpManager.DeleteFile(
-                    $"movie-{contentId}.{reqContentExt}", 
-                    FtpManager.moviePicturesFolder
-                );
-            break;
-        }
+        string reqContentExt = contentImageUrl.Split(".")[^1];
+        await FtpManager.DeleteFile(
+            $"{contentTypeData.prefixFileName}{contentId}.{reqContentExt}", 
+            contentTypeData.storageFolder
+        );
     }
 }

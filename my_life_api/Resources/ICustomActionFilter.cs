@@ -7,6 +7,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using my_life_api.Models;
+using my_life_api.Shared;
 
 namespace my_life_api.Resources;
 
@@ -33,57 +34,7 @@ static public class MatchedJTokenTypesArray {
     }
 }
 
-public enum FormDataFieldType {
-    Bool = 1,
-    String = 2,
-    Int = 3,
-    Float = 4,
-    File = 5,
-    IntEnumerable = 6,
-    StringEnumerable = 7,
-    FileEnumerable = 8
-}
-
-static public class MatchedFormDataFieldTypesArray {
-    public class MatchedFormDataFieldType {
-        public FormDataFieldType fieldTypeEnum { get; set; }
-        public Type type { get; set; }
-        public MatchedFormDataFieldType(
-            FormDataFieldType _fieldTypeEnum, 
-            Type _type
-        ) {
-            fieldTypeEnum = _fieldTypeEnum;
-            type = _type;
-        }
-    }
-
-    private static readonly ImmutableArray<MatchedFormDataFieldType> array = ImmutableArray.Create(
-        new MatchedFormDataFieldType(FormDataFieldType.String, typeof(string)),
-        new MatchedFormDataFieldType(FormDataFieldType.Bool, typeof(bool)),
-        new MatchedFormDataFieldType(FormDataFieldType.Int, typeof(int)),
-        new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float)),
-        new MatchedFormDataFieldType(FormDataFieldType.Float, typeof(float?)),
-        new MatchedFormDataFieldType(FormDataFieldType.File, typeof(IFormFile)),
-        new MatchedFormDataFieldType(FormDataFieldType.IntEnumerable, typeof(IEnumerable<int>)),
-        new MatchedFormDataFieldType(FormDataFieldType.StringEnumerable, typeof(IEnumerable<string>)),
-        new MatchedFormDataFieldType(FormDataFieldType.FileEnumerable, typeof(IEnumerable<IFormFile>))
-    );
-
-    public static ImmutableArray<MatchedFormDataFieldType> Get() {
-        return array;
-    }
-}
-
 public class ICustomActionFilter : IAsyncActionFilter {
-    public class InvalidFieldError {
-        public string campo { get; set; }
-        public string detalhes { get; set; }
-        public InvalidFieldError(string _campo, string _detalhes) {
-            campo = _campo;
-            detalhes = _detalhes;
-        }
-    }
-
     /// <summary>
     ///     Tenta buscar o valor de um Param da requisição
     ///     retornando o valor do primeiro que encontrar,
@@ -222,11 +173,8 @@ public class ICustomActionFilter : IAsyncActionFilter {
                 // Obtém o valor da propriedade esperada da requisição
                 StringValues reqPropertyValue = formData[propertyName];
 
-                FormDataFieldType? expectedTypeEnum = (MatchedFormDataFieldTypesArray.Get()
-                    .FirstOrDefault(ft =>
-                        ft.type == expectedType
-                    )
-                )?.fieldTypeEnum;
+                DataTypesEnum? expectedTypeEnum = 
+                    DataType.GetMatchedTypeByType(expectedType)?.fieldTypeEnum;
 
                 // Função conversora do valor recebido para o esperado
                 // se for um valor opcional e vazio roda a função abaixo, retornando null
@@ -234,8 +182,8 @@ public class ICustomActionFilter : IAsyncActionFilter {
 
                 // Se for esperado arquivo, valor tipo string ou Enumerable
                 // não aplica regra de obrigatóriedade
-                bool isFileExpected = expectedTypeEnum == FormDataFieldType.File;
-                bool isTextExpected = expectedTypeEnum == FormDataFieldType.String;
+                bool isFileExpected = expectedTypeEnum == DataTypesEnum.File;
+                bool isTextExpected = expectedTypeEnum == DataTypesEnum.String;
                 bool isEnumerableExpected = typeof(IEnumerable).IsAssignableFrom(expectedType) 
                     && !isTextExpected;
 
@@ -247,19 +195,19 @@ public class ICustomActionFilter : IAsyncActionFilter {
                     || isEnumerableExpected
                 ) {
                     switch (expectedTypeEnum) {
-                        case FormDataFieldType.String:
+                        case DataTypesEnum.String:
                             reqValueConverter = () => reqPropertyValue.ToString();
                         break;
-                        case FormDataFieldType.Int:
+                        case DataTypesEnum.Int:
                             reqValueConverter = () => Int32.Parse(reqPropertyValue);
                         break;
-                        case FormDataFieldType.Float:
+                        case DataTypesEnum.Float:
                             reqValueConverter = () => float.Parse(reqPropertyValue);
                         break;
-                        case FormDataFieldType.Bool:
+                        case DataTypesEnum.Bool:
                             reqValueConverter = () => bool.Parse(reqPropertyValue);
                         break;
-                        case FormDataFieldType.IntEnumerable:
+                        case DataTypesEnum.IntEnumerable:
                             reqValueConverter = () => {
                                 // Se informado o campo, mas vazio, retorna vazio
                                 if (reqPropertyValue == "") return Array.Empty<int>();
@@ -281,7 +229,7 @@ public class ICustomActionFilter : IAsyncActionFilter {
                                 return convertedValues;
                             };
                         break;
-                        case FormDataFieldType.StringEnumerable:
+                        case DataTypesEnum.StringEnumerable:
                             reqValueConverter = () => {
                                 // Se informado o campo, mas vazio, retorna vazio
                                 if (reqPropertyValue == "") return Array.Empty<string>();
@@ -289,10 +237,10 @@ public class ICustomActionFilter : IAsyncActionFilter {
                                 return reqPropertyValue.ToArray(); 
                             };
                         break;
-                        case FormDataFieldType.File:
+                        case DataTypesEnum.File:
                             reqValueConverter = () => formData.Files[propertyName];
                         break;
-                        case FormDataFieldType.FileEnumerable:
+                        case DataTypesEnum.FileEnumerable:
                             reqValueConverter = () => {
                                 // Se informado o campo, mas vazio, retorna vazio
                                 if (formData.Files[propertyName] == null) return Array.Empty<IFormFile>();

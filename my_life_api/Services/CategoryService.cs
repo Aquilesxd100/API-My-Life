@@ -8,7 +8,7 @@ namespace my_life_api.Services;
 public class CategoryService {
     private CategoryDBManager dbManager = new CategoryDBManager();
 
-    public async Task<IEnumerable<CategoryDTO>> GetCategoriesByContentTypeId(
+    public async Task<IEnumerable<CategoryDTO>> GetCategoriesByContentType(
         ContentTypesEnum contentType
     ) {
         IEnumerable<CategoryDTO> categories = await dbManager.GetCategoriesByContentTypeId(
@@ -50,7 +50,11 @@ public class CategoryService {
     }
 
     public async Task DeleteCategory(CategoryDTO category) {
-        await dbManager.DeleteCategoryRelations(category.id, category.idTipoConteudo);
+        ContentTypeData contentTypeData = ContentUtils.GetContentTypeData(
+            category.idTipoConteudo
+        );
+        await dbManager.DeleteCategoryRelations(category.id, contentTypeData);
+
         await dbManager.DeleteCategoryById(category.id);
     }
 

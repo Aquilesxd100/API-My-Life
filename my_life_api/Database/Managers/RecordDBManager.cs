@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using MySql.Data.MySqlClient;
-using my_life_api.Resources;
 using my_life_api.Models;
 
 namespace my_life_api.Database.Managers;
@@ -10,7 +9,7 @@ public class SecondaryImgToSave {
     public string url { get; set; }
 }
 
-public class RecordDBManager : BaseDBManager {
+public class RecordDBManager {
     public async Task<IEnumerable<RecordDTO>> GetBasicRecords() {
         await DataBase.OpenConnectionIfClosed();
 

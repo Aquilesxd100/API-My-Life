@@ -25,7 +25,7 @@ public class DeleteImgController : ControllerBase {
         [FromQuery] string idConteudo
     ) {
         ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
-        int resourceId = Int32.Parse(idConteudo);
+        int contentId = Int32.Parse(idConteudo);
         dynamic requestedItem = JsonConvert.DeserializeObject(
             HttpContext.Request.Headers["requestedItem"]
         );
@@ -35,7 +35,7 @@ public class DeleteImgController : ControllerBase {
 
         return Ok(ApiResponse.CreateBody(
             200,
-            "A imagem foi removida com sucesso!"
+            "A imagem foi excluída com sucesso!"
         ));
     }
 }

@@ -3,7 +3,6 @@ using my_life_api.Models;
 using my_life_api.Models.Requests.Record;
 using my_life_api.Resources;
 using my_life_api.Shared;
-using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.ValidationFilters.Record;
 
@@ -42,9 +41,8 @@ public class CreateRecordValidationFilter : ICustomActionFilter {
             throw new CustomException(400, "O ano do registro contém caracteres inválidos.");
         }
 
-        ContentValidator validator = new ContentValidator();
-        validator.ValidateName(record.nome, true);
-        validator.ValidateOptionalImgFile(record.imagemPrincipal);
+        Validator.ValidateName(record.nome, true);
+        Validator.ValidateOptionalImgFile(record.imagemPrincipal);
 
         if (string.IsNullOrEmpty(record.conteudo) || record.conteudo.Trim().Length == 0) {
             throw new CustomException(

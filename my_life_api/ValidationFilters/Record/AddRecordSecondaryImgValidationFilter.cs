@@ -4,7 +4,7 @@ using my_life_api.Database.Managers;
 using my_life_api.Models;
 using my_life_api.Resources;
 using my_life_api.Models.Requests.Record;
-using my_life_api.Shared.ContentResources;
+using my_life_api.Shared;
 
 namespace my_life_api.ValidationFilters.Record;
 
@@ -19,9 +19,8 @@ public class AddRecordSecondaryImgValidationFilter : ICustomActionFilter {
             requestObj
         );
 
-        var validator = new ContentValidator();
         if (secondaryImgRequest.imagemSecundaria != null) { 
-            validator.ValidateOptionalImgFile(secondaryImgRequest.imagemSecundaria);            
+            Validator.ValidateOptionalImgFile(secondaryImgRequest.imagemSecundaria);            
         } else {
             throw new CustomException(
                 400, 

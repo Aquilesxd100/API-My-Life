@@ -7,6 +7,7 @@ using my_life_api.ValidationFilters;
 using my_life_api.ValidationFilters.Security;
 using my_life_api.ValidationFilters.Category;
 using my_life_api.Models.Requests.Category;
+using my_life_api.Shared.ContentResources;
 
 namespace my_life_api.Controllers;
 
@@ -26,7 +27,7 @@ public class CategoryController : ControllerBase {
         CategoryService service = new CategoryService();
 
         ContentTypesEnum contentTypeId = (ContentTypesEnum)Int32.Parse(idTipoConteudo);
-        IEnumerable<CategoryDTO> categories = await service.GetCategoriesByContentTypeId(
+        IEnumerable<CategoryDTO> categories = await service.GetCategoriesByContentType(
             contentTypeId
         );
 

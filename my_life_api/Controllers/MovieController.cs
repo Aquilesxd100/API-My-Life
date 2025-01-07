@@ -3,10 +3,12 @@ using Newtonsoft.Json;
 using my_life_api.Resources;
 using my_life_api.Services;
 using my_life_api.ValidationFilters.Security;
-using my_life_api.ValidationFilters.Movie;
-using my_life_api.Models.Requests.Movie;
 using my_life_api.Models;
 using my_life_api.ValidationFilters.Content;
+using my_life_api.Shared.ContentResources;
+using my_life_api.Models.Content;
+using my_life_api.Models.Content.Entities;
+using my_life_api.Shared;
 
 namespace my_life_api.Controllers;
 
@@ -23,75 +25,73 @@ public class MovieController : ControllerBase {
     [ServiceFilter(typeof(TokenValidationFilter))]
     [ServiceFilter(typeof(ContentFiltersParamValidationFilter))]
     public async Task<IActionResult> Get(
-        [FromQuery] string fragmentoAlma,
-        [FromQuery] string idAutor,
+        [FromQuery] string pesquisa,
+        [FromQuery] bool? fragmentoAlma,
+        [FromQuery] int? idAutor,
         [FromQuery] IEnumerable<string> idsCategorias,
         [FromQuery] string notaMaiorIgualQue,
         [FromQuery] string notaMenorIgualQue,
-        [FromQuery] string nome,
-        [FromQuery] string dublado
+        [FromQuery] bool? dublado
     ) {
-        ContentFilters filters = new ContentFilters() {
-            soulFragment = fragmentoAlma != null ? (fragmentoAlma == "true") : null,
-            authorId = idAutor != null ? Int32.Parse(idAutor) : null,
-            categoriesIds = 
-                idsCategorias != null 
-                    ? idsCategorias.Select(id => Int32.Parse(id)) 
-                    : null,
-            ratingGreaterEqualTo = 
-                notaMaiorIgualQue != null 
-                    ? float.Parse(notaMaiorIgualQue) 
-                    : null,
-            ratingLesserEqualTo = 
-                notaMenorIgualQue != null 
-                    ? float.Parse(notaMenorIgualQue) 
-                    : null,
-            name = nome,
-            dubbed = dublado != null ? (dublado == "true") : null,
-        };
-        MovieService service = new MovieService();
+        ContentFilters filters = new ContentFilters(
+            pesquisa,
+            fragmentoAlma,
+            idAutor,
+            idsCategorias,
+            notaMaiorIgualQue,
+            notaMenorIgualQue,
+            null,
+            dublado
+        );
+        ContentService service = new ContentService();
 
-        IEnumerable<MovieDTO> movies = await service.GetMovies(filters);
+        IEnumerable<object> items = await service.GetItems(
+            ContentTypesEnum.Cinema, 
+            filters
+        );
 
         return Ok(ApiResponse.CreateBody(
             200, 
             "Lista de filmes recebida com sucesso!",
-            new { filmes = movies }
+            new { filmes = items }
         ));
     }
 
     [HttpPost("filme", Name = "filme")]
     [ServiceFilter(typeof(TokenValidationFilter))]
-    [ServiceFilter(typeof(CreateMovieValidationFilter))]
+    [ServiceFilter(typeof(CreateUpdateContentValidationFilter))]
     public async Task<IActionResult> Post(
         [FromForm] string nome,
-        [FromForm] IFormFile imagem,
+        [FromForm] IFormFile? imagem,
         [FromForm] float nota,
-        [FromForm] bool dublado,
-        [FromForm] bool fragmentoAlma,
+        [FromForm] bool? dublado,
+        [FromForm] bool? fragmentoAlma,
         [FromForm] int idAutor,
         [FromForm] IEnumerable<int> idsCategorias
     ) {
-        MovieService service = new MovieService();
+        ContentService service = new ContentService();
 
-        MovieCreateRequestDTO movieReq = new MovieCreateRequestDTO {
-            nome = nome,
-            imagem = imagem,
-            nota = nota,
-            dublado = dublado,
-            fragmentoAlma = fragmentoAlma,
-            idAutor = idAutor,
-            idsCategorias = idsCategorias,
+        MovieEntity item = new MovieEntity() {
+            name = nome,
+            rating = nota,
+            dubbed = Format.GetByteValueOfBool(dublado ?? false),
+            soulFragment = Format.GetByteValueOfBool(fragmentoAlma ?? false),
+            authorId = idAutor
         };
 
-        await service.CreateMovie(movieReq);
+        await service.CreateItem(
+            ContentTypesEnum.Cinema, 
+            item,
+            idsCategorias,
+            imagem
+        );
 
         return Ok(ApiResponse.CreateBody(201, "Filme registrado com sucesso!"));
     }
 
     [HttpPut("filme", Name = "filme")]
     [ServiceFilter(typeof(TokenValidationFilter))]
-    [ServiceFilter(typeof(UpdateMovieValidationFilter))]
+    [ServiceFilter(typeof(CreateUpdateContentValidationFilter))]
     public async Task<IActionResult> Put(
         [FromForm] int id,
         [FromForm] string? nome,
@@ -101,32 +101,36 @@ public class MovieController : ControllerBase {
         [FromForm] bool? fragmentoAlma,
         // Espera sempre valor, caso nao enviado
         // considera que o conteudo nao deve ter categorias
-        [FromForm] IEnumerable<int>? idsCategorias
+        [FromForm] IEnumerable<int> idsCategorias
     ) {
-        MovieService service = new MovieService();
-
-        MovieUpdateRequestDTO movieReq = new MovieUpdateRequestDTO {
-            id = id,
-            nome = nome,
-            imagem = imagem,
-            nota = nota,
-            dublado = dublado,
-            fragmentoAlma = fragmentoAlma,
-            idsCategorias = idsCategorias,
-        };
-
         MovieDTO dbMovie = JsonConvert.DeserializeObject<MovieDTO>(
             HttpContext.Request.Headers["requestedItem"]
         );
 
-        await service.UpdateMovie(movieReq, dbMovie);
+        ContentService service = new ContentService();
+
+        MovieEntity item = new MovieEntity() {
+            name = nome ?? dbMovie.nome,
+            rating = nota ?? dbMovie.nota,
+            dubbed = Format.GetByteValueOfBool(dublado ?? dbMovie.dublado),
+            soulFragment = Format.GetByteValueOfBool(fragmentoAlma ?? dbMovie.fragmentoAlma),
+            authorId = (int)dbMovie.autor.id
+        };
+
+        await service.UpdateItem(
+            ContentTypesEnum.Cinema,
+            id,
+            item,
+            idsCategorias,
+            imagem
+        );
 
         return Ok(ApiResponse.CreateBody(200, "Filme atualizado com sucesso!"));
     }
 
     [HttpDelete("filme", Name = "filme")]
     [ServiceFilter(typeof(TokenValidationFilter))]
-    [ServiceFilter(typeof(DeleteMovieValidationFilter))]
+    [ServiceFilter(typeof(DeleteContentValidationFilter))]
     public async Task<IActionResult> Delete(
         [FromQuery] string idFilme
     ) {
@@ -136,7 +140,7 @@ public class MovieController : ControllerBase {
             HttpContext.Request.Headers["requestedItem"]
         );
 
-        await service.DeleteContentById(        
+        await service.DeleteItemByTypeAndId(        
             ContentTypesEnum.Cinema,
             Int32.Parse(idFilme),
             dbMovie.urlImagem
