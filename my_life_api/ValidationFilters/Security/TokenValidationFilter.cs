@@ -5,11 +5,17 @@ namespace my_life_api.ValidationFilters.Security;
 
 public class TokenValidationFilter : IActionFilter {
     public void OnActionExecuting(ActionExecutingContext context) {
-        var token = context.HttpContext.Request.Headers["Authorization"]
-            .FirstOrDefault()?.Split(" ").Last();
+        var authenticationCookie = context.HttpContext.Request.Cookies
+            .FirstOrDefault(cookie => 
+                cookie.Key == "tokenAutenticacao"
+            );
+
+        // Antiga autenticacao feita utilizando somente localStorage
+        //var token = context.HttpContext.Request.Headers["Authorization"]
+        //    .FirstOrDefault()?.Split(" ").Last();
 
         AuthorizationService authorizationService = new AuthorizationService();
-        authorizationService.ValidateToken(token);
+        authorizationService.ValidateToken(authenticationCookie.Value);
 
     }
 
