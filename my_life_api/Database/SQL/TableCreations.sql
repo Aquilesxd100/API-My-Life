@@ -101,7 +101,7 @@ Create Table Series (
   imageUrl Varchar(255),
   rating Float(4, 2), 
   dubbed Tinyint(1) Default 0, 
-  completed Tinyint(1) Default 1,
+  finished Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
   Foreign Key (authorId) References Authors(id)
@@ -120,7 +120,7 @@ Create Table Mangas (
   name Varchar(70) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
-  completed Tinyint(1) Default 1,
+  finished Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
   Foreign Key (authorId) References Authors(id)
@@ -139,7 +139,7 @@ Create Table Animes (
   name Varchar(70) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
-  completed Tinyint(1) Default 1,
+  finished Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
   Foreign Key (authorId) References Authors(id)
@@ -158,7 +158,7 @@ Create Table Games (
   name Varchar(50) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
-  completed Tinyint(1) Default 1,
+  finished Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
   Foreign Key (authorId) References Authors(id)
@@ -177,7 +177,7 @@ Create Table Books (
   name Varchar(50) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
-  completed Tinyint(1) Default 1,
+  finished Tinyint(1) Default 1,
   soulFragment Tinyint(1) Default 0,
   authorId Integer Not Null,
   Foreign Key (authorId) References Authors(id)
