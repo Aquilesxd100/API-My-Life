@@ -6,7 +6,7 @@ Insert Into ContentTypes (id, name)
   Values
     (1, 'Musical'),
     (2, 'Cinema'),
-    (3, 'Mangás'),
+    (3, 'Mangas'),
     (4, 'Jogos'),
     (5, 'Frases'),
     (6, 'Livros'),
