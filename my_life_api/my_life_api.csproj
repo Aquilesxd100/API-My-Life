@@ -21,4 +21,13 @@
     <Folder Include="Database\SQL\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Database\SQL\Inserts.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Database\SQL\TableCreations.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
