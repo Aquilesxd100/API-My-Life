@@ -138,7 +138,7 @@ public class ContentDBManager {
             $"Insert Into {tableName} " +
                 $"({String.Join(',', columnsData.Select(cd => cd.name))})" +
                 "Values " +
-                    $"({String.Join(',', columnsData.Select(cd => cd.value))});" +
+                    $"({String.Join(',', columnsData.Select(cd => $"'{cd.value}'"))});" +
             "Select Last_Insert_Id();";
 
         var result = await myCommand.ExecuteScalarAsync();
@@ -485,8 +485,8 @@ public class ContentDBManager {
         }
 
         if (filters.finished != null) {
-            int completedInByte = filters.finished == true ? 1 : 0;
-            conditionals.Add($"completed = {completedInByte}");
+            int finishedInByte = filters.finished == true ? 1 : 0;
+            conditionals.Add($"finished = {finishedInByte}");
         }
 
         if (filters.ratingGreaterEqualTo != null)
