@@ -17,6 +17,7 @@ public class SetupDBManager {
         await DataBase.OpenConnectionIfClosed();
 
         MySqlCommand myCommand = new MySqlCommand();
+        myCommand.CommandTimeout = 900;
         myCommand.Connection = DataBase.connection;
         myCommand.CommandText = creationSql;
 
@@ -44,31 +45,15 @@ public class SetupDBManager {
         await DataBase.CloseConnection();
     }
     public async Task CreateFtpFolders() { 
-        string storageBaseUrl = Environment.GetEnvironmentVariable("DATA_BASE_URL");
-
-        AsyncFtpClient client = new AsyncFtpClient(
-            Environment.GetEnvironmentVariable("FTP_SERVER"),
-            Environment.GetEnvironmentVariable("FTP_USERNAME"),
-            Environment.GetEnvironmentVariable("FTP_PASSWORD")
-        );
+        AsyncFtpClient client = FtpManager.GetClient();
 
         // Pastas de recursos com imagens
-        List<Task> foldersToCreateTasks = new List<Task>() {
-            client.CreateDirectory(storageBaseUrl + "/" + FtpManager.authorPicturesFolder),
-            client.CreateDirectory(storageBaseUrl + "/" + FtpManager.recordPicturesFolder)
-        };
+        await client.CreateDirectory(FtpManager.authorPicturesFolder);
+        await client.CreateDirectory(FtpManager.recordPicturesFolder);
 
         // Pastas de conteudos
         foreach (ContentTypeData ctd in ContentUtils.contentTypesData) {
-            foldersToCreateTasks.Add(
-                client.CreateDirectory(
-                    storageBaseUrl 
-                    + "/" 
-                    + ctd.storageFolder
-                )
-            );
+            await client.CreateDirectory(ctd.storageFolder);
         }
-
-        await Task.WhenAll(foldersToCreateTasks);
     }
 }

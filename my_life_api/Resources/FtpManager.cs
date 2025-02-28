@@ -30,6 +30,10 @@ public static class FtpManager {
         storageBaseUrl = _storageBaseUrl;
     }
 
+    public static AsyncFtpClient GetClient() {
+        return client;
+    }
+
     public static async Task UploadFile(
         string fileName, 
         IFormFile file, 
