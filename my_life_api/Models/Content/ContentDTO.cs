@@ -10,7 +10,7 @@ public abstract class ContentDTO {
     public int? id { get; set; }
 
     [RequiredFieldOnCreation()]
-    [CustomField("idAutor")]
+    [CustomField("idAutor", typeof(int))]
     public AuthorDTO? autor { get; set; }
 
     [CustomField("idsCategorias", typeof(IEnumerable<int>))]

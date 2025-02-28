@@ -18,7 +18,6 @@ public class CreateUpdateContentValidationFilter : ICustomActionFilter {
         ActionExecutingContext context,
         ActionExecutionDelegate next
     ) {
-        Console.WriteLine("oi");
         bool isCreation = context.HttpContext.Request.Method == "POST";
         bool hasFieldsToUpdate = false;
 
