@@ -2,6 +2,7 @@
 using System.Data.Common;
 using System.Reflection;
 using System.Collections.Immutable;
+using System.Globalization;
 using MySql.Data.MySqlClient;
 using my_life_api.Shared.ContentResources;
 using my_life_api.Models;
@@ -489,11 +490,11 @@ public class ContentDBManager {
             conditionals.Add($"finished = {finishedInByte}");
         }
 
-        if (filters.ratingGreaterEqualTo != null)
-            conditionals.Add($"rating >= '{filters.ratingGreaterEqualTo}'");
+        if (filters.ratingGreaterEqualTo != null)       
+            conditionals.Add($"Round(rating, 2) >= '{((float)filters.ratingGreaterEqualTo).ToString(CultureInfo.InvariantCulture)}'");
 
         if (filters.ratingLesserEqualTo != null)
-            conditionals.Add($"rating <= '{filters.ratingLesserEqualTo}'");
+            conditionals.Add($"Round(rating, 2) <= '{((float)filters.ratingLesserEqualTo).ToString(CultureInfo.InvariantCulture)}'");
 
         if (!string.IsNullOrEmpty(filters.search)) {
             IEnumerable<string> fieldsToFilter = GetStringDbColumnsNamesByEntity(
