@@ -59,7 +59,7 @@ public class DeleteContentValidationFilter : ICustomActionFilter {
         if (dbItem == null) {
             throw new CustomException(
                 404, 
-                $"Nenhum {contentTypeData.nameInPtBr} com esse id foi encontrado(a)."
+                $"Nenhum(a) {contentTypeData.nameInPtBr} com esse id foi encontrado(a)."
             );
         }
 
