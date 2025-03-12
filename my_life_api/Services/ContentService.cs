@@ -113,7 +113,7 @@ public class ContentService {
     public async Task DeleteItemByTypeAndId( 
         ContentTypesEnum contentType,
         int contentId,
-        string? urlImagem
+        string? urlImagem = null
     ) {
         ContentTypeData contentTypeData = ContentUtils.GetContentTypeData(contentType);
 
