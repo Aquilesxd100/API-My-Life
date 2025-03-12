@@ -62,7 +62,7 @@ Create Table Movie_x_Category (
 
 Create Table Musics (
   id Integer Auto_Increment Primary Key,
-  name Varchar(70) Not Null,
+  name Varchar(50) Not Null,
   rating Float(4, 2) Not Null,
   soulFragment Tinyint(1) Default 0,
   link Varchar(255),
@@ -117,7 +117,7 @@ Create Table Series_x_Category (
 
 Create Table Mangas (
   id Integer Auto_Increment Primary Key,
-  name Varchar(70) Not Null,
+  name Varchar(50) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
   finished Tinyint(1) Default 1,
@@ -136,7 +136,7 @@ Create Table Manga_x_Category (
 
 Create Table Animes (
   id Integer Auto_Increment Primary Key,
-  name Varchar(70) Not Null,
+  name Varchar(50) Not Null,
   imageUrl Varchar(255),
   rating Float(4, 2), 
   finished Tinyint(1) Default 1,
