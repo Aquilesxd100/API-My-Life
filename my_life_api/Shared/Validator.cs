@@ -52,24 +52,29 @@ public static class Validator {
         return value < 0 || value > 10;
     }
 
-    public static void ValidateName(string name, bool isRequired = false) {
+    public static void ValidateText(
+        string text, 
+        bool isRequired = false,
+        string customName = "nome",
+        int customMaxLength = 50
+    ) {
         if (isRequired) {
-            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0) {
-                throw new CustomException(400, "O nome é obrigatório e não pode ficar vazio.");
+            if (string.IsNullOrEmpty(text) || text.Trim().Length == 0) {
+                throw new CustomException(400, $"O(a) {customName} é obrigatório(a) e não pode ficar vazio(a).");
             }
         }
 
-        if (!string.IsNullOrEmpty(name)) {
-            if (name.Trim().Length == 0) {
-                throw new CustomException(400, "O nome não pode ser vazio.");
+        if (!string.IsNullOrEmpty(text)) {
+            if (text.Trim().Length == 0) {
+                throw new CustomException(400, $"O(a) {customName} não pode ser vazio(a).");
             }
 
-            if (name.Length > 50) {
-                throw new CustomException(400, "O nome deve ter no máximo 50 caracteres.");
+            if (text.Length > customMaxLength) {
+                throw new CustomException(400, $"O(a) {customName} deve ter no máximo {customMaxLength} caracteres.");
             }
 
-            if (Validator.HasInvalidCharacters(name)) {
-                throw new CustomException(400, "O nome contém caracteres inválidos.");
+            if (Validator.HasInvalidCharacters(text)) {
+                throw new CustomException(400, $"O(a) {customName} contém caracteres inválidos.");
             }
         }
     }

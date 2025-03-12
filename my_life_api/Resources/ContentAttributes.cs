@@ -27,7 +27,8 @@ public class RequiredFieldOnUpdate : Attribute {}
 public enum ValidationTypeEnum {
     Text = 1,
     Rating = 2,
-    ImgFile
+    ImgFile = 3,
+    Phrase = 4
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
@@ -45,7 +46,10 @@ public class CustomValidation : Attribute {
     ) {
         switch (this.validationType) {
             case ValidationTypeEnum.Text:
-                Validator.ValidateName(formData[fieldName], true);
+                Validator.ValidateText(formData[fieldName], true);
+            break;
+            case ValidationTypeEnum.Phrase:
+                Validator.ValidateText(formData[fieldName], true, "frase", 255);
             break;
             case ValidationTypeEnum.Rating:
                 float convertedRating = 0;

@@ -41,7 +41,7 @@ public class CreateRecordValidationFilter : ICustomActionFilter {
             throw new CustomException(400, "O ano do registro contém caracteres inválidos.");
         }
 
-        Validator.ValidateName(record.nome, true);
+        Validator.ValidateText(record.nome, true);
         Validator.ValidateOptionalImgFile(record.imagemPrincipal);
 
         if (string.IsNullOrEmpty(record.conteudo) || record.conteudo.Trim().Length == 0) {

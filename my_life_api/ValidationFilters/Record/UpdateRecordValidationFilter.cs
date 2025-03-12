@@ -42,7 +42,7 @@ public class UpdateRecordValidationFilter : ICustomActionFilter {
             }
         }
 
-        Validator.ValidateName(record.nome);
+        Validator.ValidateText(record.nome);
 
         Validator.ValidateOptionalImgFile(record.imagemPrincipal);
 
